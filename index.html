@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Tools Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        body {
+            background-color: #000000;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .title {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .tool-card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s, background-color 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, 0.08);
+            text-decoration: none;
+        }
+
+        .tool-name {
+            font-size: 1.1em;
+            margin-bottom: 0.5rem;
+            color: #25d366;
+        }
+
+        .tool-description {
+            opacity: 0.7;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 20px;
+            background-color: white;
+            animation: blink 1s infinite;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            
+            .title {
+                font-size: 20px;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Web Tools Collection<span class="cursor"></span></h1>
+            <p class="description">A collection of useful web tools for everyday tasks</p>
+        </header>
+
+        <div class="tools-grid">
+            <a href="whatsapp.html" class="tool-card">
+                <h2 class="tool-name">WhatsApp Link Generator</h2>
+                <p class="tool-description">Create custom WhatsApp message links with country codes and pre-filled messages</p>
+            </a>
+
+            <!-- Template for future tools -->
+            <!--
+            <a href="tool-url.html" class="tool-card">
+                <h2 class="tool-name">Tool Name</h2>
+                <p class="tool-description">Tool description goes here</p>
+            </a>
+            -->
+        </div>
+    </div>
+</body>
+</html>
