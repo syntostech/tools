@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Tools Collection</title>
     <link rel="icon" href="https://www.syntos.xyz/files/syntos-favicon.png" type="image/x-icon">
     <style>
@@ -11,78 +13,98 @@
             font-family: 'Roboto Mono', monospace;
         }
 
+        html {
+            font-size: 16px;
+        }
+
         body {
             background-color: #000000;
             color: white;
             padding: 20px;
             min-height: 100vh;
+            line-height: 1.6;
         }
 
         .container {
+            width: 100%;
             max-width: 800px;
             margin: 0 auto;
+            padding: 0 15px;
         }
 
         .header {
-            margin-bottom: 2rem;
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
 
         .title {
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: clamp(1.5rem, 5vw, 24px);
+            margin-bottom: clamp(0.5rem, 2vw, 8px);
+            word-wrap: break-word;
+            max-width: 100%;
         }
 
         .description {
             opacity: 0.7;
-            margin-bottom: 1rem;
+            margin-bottom: clamp(0.75rem, 3vw, 1rem);
+            font-size: clamp(0.875rem, 2vw, 1rem);
         }
 
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+            gap: clamp(0.75rem, 3vw, 1rem);
+            margin-top: clamp(1.5rem, 4vw, 2rem);
         }
 
         .tool-card {
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem;
+            padding: clamp(0.75rem, 3vw, 1rem);
             border-radius: 15px;
             background-color: rgba(255, 255, 255, 0.05);
             transition: transform 0.2s, background-color 0.2s;
             cursor: pointer;
             text-decoration: none;
             color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .tool-card:hover {
+        .tool-card:hover, .tool-card:focus {
             transform: translateY(-2px);
             background-color: rgba(255, 255, 255, 0.08);
             text-decoration: none;
+            outline: none;
+        }
+
+        .tool-card:active {
+            transform: translateY(0);
         }
 
         .tool-name {
-            font-size: 1.1em;
+            font-size: clamp(1rem, 3vw, 1.1em);
             margin-bottom: 0.5rem;
             color: #25d366;
         }
 
         .tool-description {
             opacity: 0.7;
-            font-size: 0.9em;
+            font-size: clamp(0.8rem, 2vw, 0.9em);
             line-height: 1.4;
         }
 
         .cursor {
             display: inline-block;
-            width: 8px;
-            height: 20px;
+            width: clamp(6px, 1.5vw, 8px);
+            height: clamp(16px, 4vw, 20px);
             background-color: white;
             animation: blink 1s infinite;
             margin-left: 5px;
+            vertical-align: middle;
         }
 
         @keyframes blink {
@@ -90,17 +112,50 @@
             50% { opacity: 0; }
         }
 
+        /* Media Queries */
         @media (max-width: 600px) {
             body {
-                padding: 15px;
+                padding: 15px 10px;
             }
-            
-            .title {
-                font-size: 20px;
+
+            .container {
+                padding: 0 10px;
             }
-            
+
             .tools-grid {
-                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .tool-card {
+                padding: 0.875rem;
+            }
+        }
+
+        @media (max-width: 350px) {
+            html {
+                font-size: 14px;
+            }
+
+            .tool-card {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) {
+            .tool-card:hover {
+                transform: none;
+            }
+        }
+
+        /* Reduced Motion Preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .cursor {
+                animation: none;
+            }
+
+            .tool-card {
+                transition: none;
             }
         }
     </style>
@@ -111,13 +166,11 @@
             <h1 class="title">Web Tools Collection<span class="cursor"></span></h1>
             <p class="description">A collection of useful web tools for everyday tasks</p>
         </header>
-
         <div class="tools-grid">
             <a href="/whatsapp" class="tool-card">
                 <h2 class="tool-name">WhatsApp Link Generator</h2>
                 <p class="tool-description">Create custom WhatsApp message links with country codes and pre-filled messages</p>
             </a>
-
             <!-- Template for future tools -->
             <!--
             <a href="tool-url.html" class="tool-card">
