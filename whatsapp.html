@@ -190,6 +190,7 @@
         <div class="input-group">
             <label for="country">Country Code:</label>
             <select id="country">
+                <option value="" disabled selected>Select your country</option>
                 <option value="93">Afghanistan (+93)</option>
                 <option value="355">Albania (+355)</option>
                 <option value="213">Algeria (+213)</option>
@@ -448,10 +449,15 @@
             }
         });
 
-        function generateLink() {
+             function generateLink() {
             const country = document.getElementById('country').value;
             const phone = document.getElementById('phone').value.replace(/[^0-9]/g, '');
             const message = encodeURIComponent(document.getElementById('message').value);
+            
+            if (!country) {
+                document.getElementById('result').innerText = 'Please select a country';
+                return;
+            }
             
             if (!phone) {
                 document.getElementById('result').innerText = 'Please enter a phone number';
