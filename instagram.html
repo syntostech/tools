@@ -15,11 +15,13 @@
             background: #000;
             color: #fff;
             padding: 20px;
+            padding-bottom: 100px;
         }
 
         .container {
             max-width: 935px;
             margin: 0 auto;
+            position: relative;
         }
 
         .preview {
@@ -118,15 +120,73 @@
             z-index: 1000;
             display: none;
         }
+
+        .verification-bubble {
+            position: fixed;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            background: rgba(0, 149, 246, 0.95);
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            pointer-events: all;
+        }
+
+        .verification-bubble.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .verification-bubble::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 12px;
+            height: 12px;
+            background: rgba(0, 149, 246, 0.95);
+        }
+
+        .checkbox-container {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .verification-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div id="tooltip" class="tooltip">Click to edit</div>
+    <div class="verification-bubble" id="verification-bubble">
+        Check this to add verification badge
+        <div class="checkbox-container">
+            <input type="checkbox" class="verification-checkbox" id="verification-checkbox">
+        </div>
+    </div>
     <div class="container">
         <div class="preview">
             <div class="profile-header">
                 <input type="file" id="profile-picture-input" accept="image/*" class="image-input">
-                <img src="https://s6.imgcdn.dev/YDCRKt.png" alt="Profile Picture" class="profile-picture" id="preview-picture" title="Click to change profile picture">
+                <img src="https://s6.imgcdn.dev/YDC9hw.png" alt="Profile Picture" class="profile-picture" id="preview-picture" title="Click to change profile picture">
                 
                 <div class="profile-info">
                     <h2>
@@ -196,9 +256,17 @@
             }
         });
 
-        // Verified badge toggle
-        document.getElementById('verified-badge').addEventListener('click', function() {
-            this.style.display = this.style.display === 'none' ? 'inline-block' : 'none';
+        // Verification bubble functionality
+        const verificationBubble = document.getElementById('verification-bubble');
+        const verificationCheckbox = document.getElementById('verification-checkbox');
+        const verifiedBadge = document.getElementById('verified-badge');
+
+        // Show verification bubble
+        verificationBubble.classList.add('show');
+
+        // Handle verification checkbox
+        verificationCheckbox.addEventListener('change', (e) => {
+            verifiedBadge.style.display = e.target.checked ? 'inline-block' : 'none';
         });
 
         // Post uploads
