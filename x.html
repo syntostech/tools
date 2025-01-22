@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="https://www.syntos.xyz/files/syntos-favicon.png" type="image/x-icon">
     <title>X Profile Preview</title>
     <style>
         * {
@@ -16,12 +15,14 @@
         body {
             background-color: #000000;
             color: white;
+            padding: 20px;
+            padding-bottom: 100px;
         }
 
         .container {
             max-width: 600px;
             margin: 0 auto;
-            min-height: 100vh;
+            position: relative;
         }
 
         .header {
@@ -46,6 +47,12 @@
             height: 200px;
             background-color: #333;
             position: relative;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .banner:hover {
+            opacity: 0.8;
         }
 
         .banner img {
@@ -55,12 +62,7 @@
         }
 
         .banner-upload {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            cursor: pointer;
+            display: none;
         }
 
         .profile-photo {
@@ -73,6 +75,12 @@
             left: 16px;
             background-color: #333;
             overflow: hidden;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .profile-photo:hover {
+            opacity: 0.8;
         }
 
         .profile-photo img {
@@ -82,11 +90,7 @@
         }
 
         .profile-photo-upload {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
+            display: none;
         }
 
         .profile-info {
@@ -133,9 +137,10 @@
             height: 20px;
             background-color: #1d9bf0;
             border-radius: 50%;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
         }
 
         .business-badge {
@@ -143,7 +148,7 @@
             height: 20px;
             background-color: #f0b41d;
             border-radius: 50%;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             margin-left: -6px;
@@ -151,6 +156,22 @@
 
         .username {
             color: #71767b;
+        }
+
+        .editable {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .editable:hover {
+            background-color: #2f3336;
+        }
+
+        .editable:focus {
+            outline: none;
+            background-color: #3f3f3f;
         }
 
         .stats {
@@ -166,6 +187,76 @@
         .stat-number {
             color: white;
             font-weight: bold;
+        }
+
+        .tooltip {
+            position: fixed;
+            background: rgba(38, 38, 38, 0.9);
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            color: white;
+        }
+
+        .verification-bubble {
+            position: fixed;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            background: rgba(29, 155, 240, 0.95);
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+        }
+
+        .verification-bubble.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .verification-bubble::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 12px;
+            height: 12px;
+            background: rgba(29, 155, 240, 0.95);
+        }
+
+        .checkbox-container {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .verification-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .business-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            margin-left: 8px;
         }
 
         .tabs {
@@ -205,53 +296,43 @@
             height: 40px;
             border-radius: 50%;
             background-color: #333;
+            overflow: hidden;
         }
 
-        .action-buttons {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .action-button {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+        .mini-profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
     </style>
 </head>
 <body>
+    <div id="tooltip" class="tooltip">Click to edit</div>
+    <div class="verification-bubble" id="verification-bubble">
+        Toggle verification badges
+        <div class="checkbox-container">
+            Verified <input type="checkbox" class="verification-checkbox" id="verification-checkbox">
+            Business <input type="checkbox" class="business-checkbox" id="business-checkbox">
+        </div>
+    </div>
+
     <div class="container">
         <header class="header">
             <a href="#" class="back-button">←</a>
             <div>
-                <h1 class="display-name">Display Name</h1>
+                <h1 class="display-name editable" contenteditable="true">Display Name</h1>
                 <div class="username">67.4K posts</div>
             </div>
         </header>
 
         <div class="profile-section">
             <div class="banner">
-                <img src="https://s6.imgcdn.dev/YDCWi9.jpg" alt="Banner" id="bannerImg">
+                <img src="/api/placeholder/600/200" alt="Banner" id="bannerImg">
                 <input type="file" class="banner-upload" id="bannerUpload" accept="image/*">
-            </div>
-            
-            <div class="action-buttons">
-                <div class="action-button">⋯</div>
-                <div class="action-button">🔊</div>
-                <div class="action-button">🔍</div>
-                <div class="action-button">👥</div>
             </div>
 
             <div class="profile-photo">
-                <img src="https://s6.imgcdn.dev/YDCVZT.png" alt="Profile" id="profileImg">
+                <img src="/api/placeholder/120/120" alt="Profile" id="profileImg">
                 <input type="file" class="profile-photo-upload" id="profileUpload" accept="image/*">
             </div>
 
@@ -260,25 +341,25 @@
                     <div>
                         <div class="name-section">
                             <div class="display-name">
-                                Display Name
+                                <span class="editable" contenteditable="true">Display Name</span>
                                 <div class="verification">
-                                    <div class="verification-badge">✓</div>
-                                    <div class="business-badge">💼</div>
+                                    <div class="verification-badge" id="verified-badge">✓</div>
+                                    <div class="business-badge" id="business-badge">💼</div>
                                 </div>
                             </div>
-                            <div class="username">@username</div>
+                            <div class="username editable" contenteditable="true">@username</div>
                         </div>
-                        <div>Joined June 2009</div>
+                        <div class="editable" contenteditable="true">Joined June 2009</div>
                     </div>
                     <button class="follow-button">Follow</button>
                 </div>
 
                 <div class="stats">
                     <div class="stat-item">
-                        <span class="stat-number">950</span> Following
+                        <span class="stat-number editable" contenteditable="true">950</span> Following
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">213.8M</span> Followers
+                        <span class="stat-number editable" contenteditable="true">213.8M</span> Followers
                     </div>
                 </div>
 
@@ -291,18 +372,21 @@
 
                 <div class="placeholder-post">
                     <div class="post-header">
-                        <div class="mini-profile-pic"></div>
+                        <div class="mini-profile-pic">
+                            <img id="mini-profile-img" src="/api/placeholder/40/40" alt="Profile">
+                        </div>
                         <div>
-                            <div class="display-name">Display Name 
+                            <div class="display-name">
+                                <span class="editable" contenteditable="true">Display Name</span>
                                 <span class="verification">
                                     <div class="verification-badge">✓</div>
                                 </span>
                             </div>
-                            <div class="username">@username</div>
+                            <div class="username editable" contenteditable="true">@username</div>
                         </div>
                     </div>
-                    <div class="post-content">
-                        I'm an orange lol...
+                    <div class="post-content editable" contenteditable="true">
+                        My talk today at the Presidential Parade...
                     </div>
                 </div>
             </div>
@@ -310,33 +394,105 @@
     </div>
 
     <script>
-        // Handle image uploads
-        document.getElementById('bannerUpload').addEventListener('change', function(e) {
-            if (e.target.files && e.target.files[0]) {
+        // Tooltip functionality
+        const tooltip = document.getElementById('tooltip');
+        document.querySelectorAll('.editable, .banner, .profile-photo').forEach(element => {
+            element.addEventListener('mouseenter', (e) => {
+                tooltip.style.display = 'block';
+                tooltip.style.left = e.pageX + 10 + 'px';
+                tooltip.style.top = e.pageY + 10 + 'px';
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+            
+            element.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.pageX + 10 + 'px';
+                tooltip.style.top = e.pageY + 10 + 'px';
+            });
+        });
+
+        // Banner upload
+        const banner = document.querySelector('.banner');
+        const bannerInput = document.getElementById('bannerUpload');
+        const bannerImg = document.getElementById('bannerImg');
+
+        banner.addEventListener('click', () => {
+            bannerInput.click();
+        });
+
+        bannerInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('bannerImg').src = e.target.result;
+                reader.onload = (e) => {
+                    bannerImg.src = e.target.result;
                 };
-                reader.readAsDataURL(e.target.files[0]);
+                reader.readAsDataURL(file);
             }
         });
 
-        document.getElementById('profileUpload').addEventListener('change', function(e) {
-            if (e.target.files && e.target.files[0]) {
+        // Profile picture upload
+        const profilePhoto = document.querySelector('.profile-photo');
+        const profileInput = document.getElementById('profileUpload');
+        const profileImg = document.getElementById('profileImg');
+        const miniProfileImg = document.getElementById('mini-profile-img');
+
+        profilePhoto.addEventListener('click', () => {
+            profileInput.click();
+        });
+
+        profileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('profileImg').src = e.target.result;
+                reader.onload = (e) => {
+                    profileImg.src = e.target.result;
+                    miniProfileImg.src = e.target.result;
                 };
-                reader.readAsDataURL(e.target.files[0]);
+                reader.readAsDataURL(file);
             }
         });
 
-        // Handle tab switching
+        // Verification bubble functionality
+        const verificationBubble = document.getElementById('verification-bubble');
+        const verificationCheckbox = document.getElementById('verification-checkbox');
+        const businessCheckbox = document.getElementById('business-checkbox');
+        const verifiedBadges = document.querySelectorAll('.verification-badge');
+        const businessBadge = document.getElementById('business-badge');
+
+        // Show verification bubble
+        verificationBubble.classList.add('show');
+
+        // Handle verification checkbox
+        verificationCheckbox.addEventListener('change', (e) => {
+            verifiedBadges.forEach(badge => {
+                badge.style.display = e.target.checked ? 'flex' : 'none';
+            });
+        });
+
+        // Handle business checkbox
+        businessCheckbox.addEventListener('change', (e) => {
+            businessBadge.style.display = e.target.checked ? 'flex' : 'none';
+        });
+
+        // Tab functionality
         const tabs = document.querySelectorAll('.tab');
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
+            });
+        });
+
+        // Prevent newlines in single-line editable elements
+        document.querySelectorAll('.editable').forEach(element => {
+            element.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    element.blur();
+                }
             });
         });
     </script>
