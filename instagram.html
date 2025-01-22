@@ -20,27 +20,17 @@
         .container {
             max-width: 935px;
             margin: 0 auto;
-            display: flex;
-            gap: 20px;
         }
 
         .preview {
-            flex: 1;
             padding: 20px;
             background: #000;
             border-radius: 4px;
         }
 
-        .editor {
-            width: 300px;
-            padding: 20px;
-            background: #262626;
-            border-radius: 4px;
-        }
-
         .profile-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 30px;
             margin-bottom: 44px;
         }
@@ -50,6 +40,12 @@
             height: 150px;
             border-radius: 50%;
             object-fit: cover;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .profile-picture:hover {
+            opacity: 0.8;
         }
 
         .profile-info h2 {
@@ -77,56 +73,65 @@
             background: #262626;
             width: 100%;
             object-fit: cover;
+            cursor: pointer;
+            transition: opacity 0.3s;
         }
 
-        .editor input,
-        .editor textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 12px;
-            background: #121212;
-            border: 1px solid #363636;
-            color: #fff;
-            border-radius: 4px;
-        }
-
-        .editor label {
-            display: block;
-            margin-bottom: 4px;
-            color: #a8a8a8;
+        .post-item:hover {
+            opacity: 0.8;
         }
 
         .verified-badge {
-            width: 18px;
-            height: 18px;
-            background: #0095f6;
-            border-radius: 50%;
+            width: 20px;
+            height: 20px;
             display: none;
-        }
-
-        .btn {
-            background: #0095f6;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
             cursor: pointer;
         }
 
         .image-input {
             display: none;
         }
+
+        .editable {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .editable:hover {
+            background-color: #262626;
+        }
+
+        .editable:focus {
+            outline: none;
+            background-color: #363636;
+        }
+
+        .tooltip {
+            position: fixed;
+            background: rgba(38, 38, 38, 0.9);
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <div id="tooltip" class="tooltip">Click to edit</div>
     <div class="container">
         <div class="preview">
             <div class="profile-header">
-                <img src="/api/placeholder/150/150" alt="Profile Picture" class="profile-picture" id="preview-picture">
+                <input type="file" id="profile-picture-input" accept="image/*" class="image-input">
+                <img src="/api/placeholder/150/150" alt="Profile Picture" class="profile-picture" id="preview-picture" title="Click to change profile picture">
+                
                 <div class="profile-info">
                     <h2>
-                        <span id="preview-username">username</span>
-                        <span class="verified-badge" id="verified-badge">✓</span>
+                        <span id="preview-username" class="editable" contenteditable="true" title="Click to edit username">username</span>
+                        <img src="https://imgcdn.dev/i/YDC9hw" class="verified-badge" id="verified-badge" alt="Verified Badge" title="Click to toggle verification">
                     </h2>
                     <div class="profile-stats">
                         <span><b id="preview-posts">3</b> posts</span>
@@ -134,94 +139,97 @@
                         <span><b id="preview-following">0</b> following</span>
                     </div>
                     <div>
-                        <div id="preview-name" style="font-weight: 600">Display Name</div>
-                        <div id="preview-bio" style="white-space: pre-line">Your bio here</div>
-                        <a href="#" id="preview-website" style="color: #0095f6; text-decoration: none">website.com</a>
+                        <div id="preview-name" class="editable" contenteditable="true" title="Click to edit display name" style="font-weight: 600">Display Name</div>
+                        <div id="preview-bio" class="editable" contenteditable="true" title="Click to edit bio" style="white-space: pre-line">Your bio here</div>
+                        <div id="preview-website" class="editable" contenteditable="true" title="Click to edit website" style="color: #0095f6">website.com</div>
                     </div>
                 </div>
             </div>
             <hr style="border-color: #262626; margin: 20px 0">
             <div class="posts-grid">
-                <img src="/api/placeholder/300/300" class="post-item" id="post1">
-                <img src="/api/placeholder/300/300" class="post-item" id="post2">
-                <img src="/api/placeholder/300/300" class="post-item" id="post3">
+                <input type="file" id="post-input-1" accept="image/*" class="image-input">
+                <input type="file" id="post-input-2" accept="image/*" class="image-input">
+                <input type="file" id="post-input-3" accept="image/*" class="image-input">
+                <img src="/api/placeholder/300/300" class="post-item" id="post1" title="Click to change image">
+                <img src="/api/placeholder/300/300" class="post-item" id="post2" title="Click to change image">
+                <img src="/api/placeholder/300/300" class="post-item" id="post3" title="Click to change image">
             </div>
-        </div>
-        <div class="editor">
-            <h3 style="margin-bottom: 20px">Edit Profile</h3>
-            <label>Username</label>
-            <input type="text" id="username" value="username">
-            
-            <label>Display Name</label>
-            <input type="text" id="name" value="Display Name">
-            
-            <label>Bio</label>
-            <textarea id="bio" rows="3">Your bio here</textarea>
-            
-            <label>Website</label>
-            <input type="text" id="website" value="website.com">
-            
-            <label>Verified Account</label>
-            <input type="checkbox" id="verified">
-            
-            <label>Profile Picture</label>
-            <input type="file" id="profile-picture" accept="image/*" class="image-input">
-            <button class="btn" onclick="document.getElementById('profile-picture').click()">Upload Picture</button>
-            
-            <hr style="border-color: #363636; margin: 20px 0">
-            
-            <label>Posts</label>
-            <input type="file" id="post-upload" accept="image/*" class="image-input">
-            <button class="btn" onclick="document.getElementById('post-upload').click()">Upload Post</button>
         </div>
     </div>
 
     <script>
-        // Update preview as user types
-        document.getElementById('username').addEventListener('input', e => {
-            document.getElementById('preview-username').textContent = e.target.value;
+        // Tooltip functionality
+        const tooltip = document.getElementById('tooltip');
+        document.querySelectorAll('.editable, .profile-picture, .post-item').forEach(element => {
+            element.addEventListener('mouseenter', (e) => {
+                tooltip.style.display = 'block';
+                tooltip.style.left = e.pageX + 10 + 'px';
+                tooltip.style.top = e.pageY + 10 + 'px';
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+            
+            element.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.pageX + 10 + 'px';
+                tooltip.style.top = e.pageY + 10 + 'px';
+            });
         });
 
-        document.getElementById('name').addEventListener('input', e => {
-            document.getElementById('preview-name').textContent = e.target.value;
+        // Profile picture upload
+        const profilePicture = document.getElementById('preview-picture');
+        const profilePictureInput = document.getElementById('profile-picture-input');
+
+        profilePicture.addEventListener('click', () => {
+            profilePictureInput.click();
         });
 
-        document.getElementById('bio').addEventListener('input', e => {
-            document.getElementById('preview-bio').textContent = e.target.value;
-        });
-
-        document.getElementById('website').addEventListener('input', e => {
-            document.getElementById('preview-website').textContent = e.target.value;
-            document.getElementById('preview-website').href = e.target.value;
-        });
-
-        document.getElementById('verified').addEventListener('change', e => {
-            document.getElementById('verified-badge').style.display = e.target.checked ? 'inline-block' : 'none';
-        });
-
-        // Handle image uploads
-        let currentPostIndex = 0;
-        
-        document.getElementById('profile-picture').addEventListener('change', e => {
+        profilePictureInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = e => {
-                    document.getElementById('preview-picture').src = e.target.result;
+                reader.onload = (e) => {
+                    profilePicture.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        document.getElementById('post-upload').addEventListener('change', e => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    currentPostIndex = (currentPostIndex % 3) + 1;
-                    document.getElementById(`post${currentPostIndex}`).src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+        // Verified badge toggle
+        document.getElementById('verified-badge').addEventListener('click', function() {
+            this.style.display = this.style.display === 'none' ? 'inline-block' : 'none';
+        });
+
+        // Post uploads
+        document.querySelectorAll('.post-item').forEach((post, index) => {
+            const input = document.getElementById(`post-input-${index + 1}`);
+            
+            post.addEventListener('click', () => {
+                input.click();
+            });
+
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        post.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Prevent newlines in single-line editable elements
+        document.querySelectorAll('.editable').forEach(element => {
+            if (element.id !== 'preview-bio') {
+                element.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        element.blur();
+                    }
+                });
             }
         });
     </script>
