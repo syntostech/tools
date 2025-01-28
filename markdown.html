@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Editor</title>
     <link rel="icon" href="https://www.syntos.xyz/files/syntos-favicon.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/DOMPurify/3.0.8/purify.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
@@ -208,6 +209,27 @@
             margin: 10px 0;
             border-radius: 4px;
             background-color: rgba(255, 68, 68, 0.1);
+        }
+
+        .success-message {
+            color: #25d366;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            background-color: rgba(37, 211, 102, 0.1);
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -434,40 +456,91 @@ function hello() {
             }
         }
 
-        function loadSavedContent() {
+         function showMessage(message, type = 'error') {
+            const existingMessage = document.querySelector('.message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Replace old showError with new version
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+
+        // Fixed insertText function with proper cursor positioning
+        function insertText(before, after = '') {
             try {
-                const savedContent = localStorage.getItem(AUTOSAVE_KEY);
-                if (savedContent) {
-                    editor.value = savedContent;
-                    updatePreview();
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const selectedText = getSelectedText();
+                const replacement = before + selectedText + after;
+                
+                editor.value = editor.value.substring(0, start) + 
+                              replacement + 
+                              editor.value.substring(end);
+                
+                editor.focus();
+                
+                if (selectedText.length > 0) {
+                    editor.selectionStart = start;
+                    editor.selectionEnd = start + replacement.length;
+                } else {
+                    const cursorPosition = start + before.length;
+                    editor.selectionStart = cursorPosition;
+                    editor.selectionEnd = cursorPosition;
                 }
+                
+                // Trigger the preview update immediately
+                updatePreview();
             } catch (error) {
-                showError('Error loading saved content: ' + error.message);
+                showError('Error inserting text: ' + error.message);
             }
         }
 
-        // Set up autosave interval
-        setInterval(saveContent, AUTOSAVE_INTERVAL);
+        // Modified save functionality
+        function saveContent() {
+            try {
+                const currentContent = editor.value;
+                localStorage.setItem(AUTOSAVE_KEY, currentContent);
+                return true;
+            } catch (error) {
+                showError('Error saving content: ' + error.message);
+                return false;
+            }
+        }
 
-        // Load saved content on page load
-        loadSavedContent();
+        // Modified manual save handler
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                if (saveContent()) {
+                    showSuccess('Content saved successfully!');
+                }
+            }
+        });
 
-        // Update preview on input
-        editor.addEventListener('input', updatePreview);
-
-        // Initial preview
-        updatePreview();
-
-        // Handle paste events to clean up pasted content
+        // Modified paste handler with better cursor positioning
         editor.addEventListener('paste', (e) => {
             e.preventDefault();
             try {
                 const text = (e.clipboardData || window.clipboardData).getData('text');
-                const selection = getSelectedText();
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
                 
-                // Clean the pasted text (remove unsafe content)
                 const cleanText = DOMPurify.sanitize(text, {
                     ALLOWED_TAGS: [],
                     ALLOWED_ATTR: []
@@ -477,8 +550,9 @@ function hello() {
                               cleanText + 
                               editor.value.substring(end);
                 
-                editor.selectionStart = start + cleanText.length;
-                editor.selectionEnd = start + cleanText.length;
+                const newPosition = start + cleanText.length;
+                editor.selectionStart = newPosition;
+                editor.selectionEnd = newPosition;
                 
                 updatePreview();
             } catch (error) {
@@ -486,50 +560,10 @@ function hello() {
             }
         });
 
-        // Add ctrl+s support for manual save
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
-                e.preventDefault();
-                saveContent();
-                showError('Content saved successfully!');
-            }
-        });
-
-        // Add warning before leaving page with unsaved changes
-        window.addEventListener('beforeunload', (e) => {
-            const savedContent = localStorage.getItem(AUTOSAVE_KEY);
-            if (savedContent !== editor.value) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
-
-        // Add accessibility for keyboard navigation
-        const toolbarButtons = document.querySelectorAll('.tool-btn');
-        toolbarButtons.forEach((button, index) => {
-            button.addEventListener('keydown', (e) => {
-                let targetButton = null;
-                
-                switch(e.key) {
-                    case 'ArrowRight':
-                        targetButton = toolbarButtons[(index + 1) % toolbarButtons.length];
-                        break;
-                    case 'ArrowLeft':
-                        targetButton = toolbarButtons[(index - 1 + toolbarButtons.length) % toolbarButtons.length];
-                        break;
-                    case 'Home':
-                        targetButton = toolbarButtons[0];
-                        break;
-                    case 'End':
-                        targetButton = toolbarButtons[toolbarButtons.length - 1];
-                        break;
-                }
-                
-                if (targetButton) {
-                    e.preventDefault();
-                    targetButton.focus();
-                }
-            });
+        // Initialize preview immediately after loading saved content
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedContent();
+            updatePreview();
         });
     </script>
 </body>
