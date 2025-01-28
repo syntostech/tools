@@ -1,503 +1,266 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X Profile Preview</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #15202b; color: #fff; }
+    
+    .profile-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #192734;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+    }
 
-        body {
-            background-color: #000000;
-            color: white;
-            padding: 20px;
-            padding-bottom: 100px;
-        }
+    .banner-area {
+      height: 200px;
+      background-image: url('https://placehold.co/600x299/png');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      cursor: pointer;
+    }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
+    .banner-area:hover::after {
+      content: 'Click to edit banner';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.7);
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
 
-        .header {
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #2f3336;
-        }
+    .profile-photo-container {
+      position: absolute;
+      top: 140px;
+      left: 0;
+      cursor: pointer;
+      margin-left: 16px;
+    }
 
-        .back-button {
-            color: white;
-            text-decoration: none;
-            margin-right: 20px;
-        }
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #192734;
+      background-image: url('https://placehold.co/120x120/png');
+      background-size: cover;
+      background-position: center;
+    }
 
-        .profile-section {
-            position: relative;
-        }
+    .profile-photo-container:hover::after {
+      content: 'Click to edit photo';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.7);
+      padding: 8px 16px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
 
-        .banner {
-            width: 100%;
-            height: 200px;
-            background-color: #333;
-            position: relative;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
+    .profile-content {
+      padding: 72px 16px 16px;
+    }
 
-        .banner:hover {
-            opacity: 0.8;
-        }
+    .name-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      position: relative;
+    }
 
-        .banner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .name {
+      font-size: 20px;
+      font-weight: bold;
+    }
 
-        .banner-upload {
-            display: none;
-        }
+    .toggle-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px 20px;
+      border-radius: 20px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      z-index: 1000;
+    }
 
-        .profile-photo {
-            width: 133px;
-            height: 133px;
-            border-radius: 50%;
-            border: 4px solid #000;
-            position: absolute;
-            bottom: -66px;
-            left: 16px;
-            background-color: #333;
-            overflow: hidden;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #fff;
+    }
 
-        .profile-photo:hover {
-            opacity: 0.8;
-        }
+    .verified {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
 
-        .profile-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .business-badge {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      background-image: url('https://placehold.co/50x50/png');
+      background-size: cover;
+      background-position: center;
+      border-radius: 4px;
+    }
 
-        .profile-photo-upload {
-            display: none;
-        }
+    .username {
+      color: #8899a6;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
 
-        .profile-info {
-            padding: 16px;
-            margin-top: 60px;
-        }
+    .url {
+      color: #1da1f2;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
 
-        .profile-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
+    .stats {
+      display: flex;
+      gap: 20px;
+      color: #8899a6;
+    }
 
-        .follow-button {
-            background-color: white;
-            color: black;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .stat-number {
+      color: #fff;
+      font-weight: bold;
+    }
 
-        .name-section {
-            margin-bottom: 4px;
-        }
+    [contenteditable]:hover::after {
+      content: 'Click to edit';
+      position: absolute;
+      background: rgba(0,0,0,0.7);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 8px;
+    }
 
-        .display-name {
-            font-size: 20px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .verification {
-            display: flex;
-            align-items: center;
-            gap: 0px;
-            margin-left: 4px;
-        }
-
-        .verification-badge {
-            width: 20px;
-            height: 20px;
-            display: none;
-        }
-
-        .verification-badge img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .business-badge {
-            width: 20px;
-            height: 20px;
-            display: none;
-            margin-left: -6px;
-        }
-
-        .business-badge img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .username {
-            color: #71767b;
-        }
-
-        .editable {
-            cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .editable:hover {
-            background-color: #2f3336;
-        }
-
-        .editable:focus {
-            outline: none;
-            background-color: #3f3f3f;
-        }
-
-        .stats {
-            display: flex;
-            gap: 20px;
-            margin-top: 12px;
-        }
-
-        .stat-item {
-            color: #71767b;
-        }
-
-        .stat-number {
-            color: white;
-            font-weight: bold;
-        }
-
-        .tooltip {
-            position: fixed;
-            background: rgba(38, 38, 38, 0.9);
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            pointer-events: none;
-            z-index: 1000;
-            display: none;
-            color: white;
-        }
-
-        .verification-bubble {
-            position: fixed;
-            left: 50%;
-            bottom: 20px;
-            transform: translateX(-50%);
-            background: rgba(29, 155, 240, 0.95);
-            padding: 12px 24px;
-            border-radius: 100px;
-            font-size: 14px;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateX(-50%) translateY(20px);
-        }
-
-        .verification-bubble.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .verification-bubble::after {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: 50%;
-            transform: translateX(-50%) rotate(45deg);
-            width: 12px;
-            height: 12px;
-            background: rgba(29, 155, 240, 0.95);
-        }
-
-        .checkbox-container {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px;
-            border-radius: 4px;
-            margin-left: 8px;
-        }
-
-        .verification-checkbox {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-
-        .business-checkbox {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #2f3336;
-            margin-top: 16px;
-        }
-
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 16px;
-            color: #71767b;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .tab.active {
-            color: white;
-            border-bottom: 4px solid #1d9bf0;
-        }
-
-        .placeholder-post {
-            padding: 16px;
-            border-bottom: 1px solid #2f3336;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .mini-profile-pic {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background-color: #333;
-            overflow: hidden;
-        }
-
-        .mini-profile-pic img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    </style>
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div id="tooltip" class="tooltip">Click to edit</div>
-    <div class="verification-bubble" id="verification-bubble">
-        Toggle verification badges
-        <div class="checkbox-container">
-            Verified <input type="checkbox" class="verification-checkbox" id="verification-checkbox">
-            Business <input type="checkbox" class="business-checkbox" id="business-checkbox">
-        </div>
+  <div class="profile-container">
+    <div class="banner-area" id="banner">
+      <input type="file" id="bannerInput" class="hidden" accept="image/*">
     </div>
-
-    <div class="container">
-        <header class="header">
-            <a href="#" class="back-button">←</a>
-            <div>
-                <h1 class="display-name editable" contenteditable="true">Display Name</h1>
-                <div class="username">67.4K posts</div>
-            </div>
-        </header>
-
-        <div class="profile-section">
-            <div class="banner">
-                <img src="/api/placeholder/600/200" alt="Banner" id="bannerImg">
-                <input type="file" class="banner-upload" id="bannerUpload" accept="image/*">
-            </div>
-
-            <div class="profile-photo">
-                <img src="/api/placeholder/133/133" alt="Profile" id="profileImg">
-                <input type="file" class="profile-photo-upload" id="profileUpload" accept="image/*">
-            </div>
-
-            <div class="profile-info">
-                <div class="profile-header">
-                    <div>
-                        <div class="name-section">
-                            <div class="display-name">
-                                <span class="editable" contenteditable="true">Display Name</span>
-                                <div class="verification">
-                                    <div class="verification-badge" id="verified-badge">
-                                        <img src="https://s6.imgcdn.dev/YDC9hw.png" alt="Verified">
-                                    </div>
-                                    <div class="business-badge" id="business-badge">
-                                        <img src="https://s6.imgcdn.dev/YDCVZT.png" alt="Business">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="username editable" contenteditable="true">@username</div>
-                        </div>
-                        <div class="editable" contenteditable="true">Joined June 2009</div>
-                    </div>
-                    <button class="follow-button">Follow</button>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-number editable" contenteditable="true">950</span> Following
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number editable" contenteditable="true">213.8M</span> Followers
-                    </div>
-                </div>
-
-                <div class="tabs">
-                    <div class="tab active">Posts</div>
-                    <div class="tab">Replies</div>
-                    <div class="tab">Highlights</div>
-                    <div class="tab">Media</div>
-                </div>
-
-                <div class="placeholder-post">
-                    <div class="post-header">
-                        <div class="mini-profile-pic">
-                            <img id="mini-profile-img" src="/api/placeholder/48/48" alt="Profile">
-                        </div>
-                        <div>
-                            <div class="display-name">
-                                <span class="editable" contenteditable="true">Display Name</span>
-                                <div class="verification">
-                                    <div class="verification-badge">
-                                        <img src="https://s6.imgcdn.dev/YDC9hw.png" alt="Verified">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="username editable" contenteditable="true">@username</div>
-                        </div>
-                    </div>
-                    <div class="post-content editable" contenteditable="true">
-                        My talk today at the Presidential Parade...
-                    </div>
-                </div>
-            </div>
-        </div>
+    
+    <div class="profile-photo-container">
+      <div class="profile-photo" id="profilePhoto"></div>
+      <input type="file" id="photoInput" class="hidden" accept="image/*">
     </div>
+    
+    <div class="profile-content">
+      <div class="name-area">
+        <span class="name" contenteditable="true">YOUR NAME</span>
+        <svg class="verified" viewBox="0 0 24 24" fill="#1DA1F2">
+          <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+        </svg>
+        <div class="business-badge" id="businessBadge">
+          <input type="file" id="businessInput" class="hidden" accept="image/*">
+        </div>
+      </div>
+      
+      <div class="username" contenteditable="true">@username</div>
+      <div class="url" contenteditable="true">example.com/example</div>
+      
+      <div class="stats">
+        <div><span class="stat-number">20</span> Following</div>
+        <div><span class="stat-number">375.5K</span> Followers</div>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        // Tooltip functionality
-        const tooltip = document.getElementById('tooltip');
-        document.querySelectorAll('.editable, .banner, .profile-photo').forEach(element => {
-            element.addEventListener('mouseenter', (e) => {
-                tooltip.style.display = 'block';
-                tooltip.style.left = e.pageX + 10 + 'px';
-                tooltip.style.top = e.pageY + 10 + 'px';
-            });
-            
-            element.addEventListener('mouseleave', () => {
-                tooltip.style.display = 'none';
-            });
-            
-            element.addEventListener('mousemove', (e) => {
-                tooltip.style.left = e.pageX + 10 + 'px';
-                tooltip.style.top = e.pageY + 10 + 'px';
-            });
-        });
+  <div class="toggle-container">
+    <label class="toggle-label">
+      <input type="checkbox" id="verifiedToggle">
+      Verified
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="businessToggle">
+      Business
+    </label>
+  </div>
 
-        // Banner upload
-        const banner = document.querySelector('.banner');
-        const bannerInput = document.getElementById('bannerUpload');
-        const bannerImg = document.getElementById('bannerImg');
+  <script>
+    // File handling functions
+    function handleFileSelect(input, targetElement, isProfilePhoto = false) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          if (isProfilePhoto) {
+            targetElement.style.backgroundImage = `url(${e.target.result})`;
+            targetElement.style.backgroundSize = 'cover';
+            targetElement.style.backgroundPosition = 'center';
+          } else {
+            targetElement.style.backgroundImage = `url(${e.target.result})`;
+            targetElement.style.backgroundSize = 'cover';
+            targetElement.style.backgroundPosition = 'center';
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
-        banner.addEventListener('click', () => {
-            bannerInput.click();
-        });
+    // Event Listeners
+    document.getElementById('banner').addEventListener('click', () => {
+      document.getElementById('bannerInput').click();
+    });
 
-        bannerInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    bannerImg.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    document.getElementById('profilePhoto').addEventListener('click', () => {
+      document.getElementById('photoInput').click();
+    });
 
-        // Profile picture upload
-        const profilePhoto = document.querySelector('.profile-photo');
-        const profileInput = document.getElementById('profileUpload');
-        const profileImg = document.getElementById('profileImg');
-        const miniProfileImg = document.getElementById('mini-profile-img');
+    document.getElementById('businessBadge').addEventListener('click', () => {
+      document.getElementById('businessInput').click();
+    });
 
-        profilePhoto.addEventListener('click', () => {
-            profileInput.click();
-        });
+    document.getElementById('bannerInput').addEventListener('change', function() {
+      handleFileSelect(this, document.getElementById('banner'));
+    });
 
-        profileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    profileImg.src = e.target.result;
-                    miniProfileImg.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    document.getElementById('photoInput').addEventListener('change', function() {
+      handleFileSelect(this, document.getElementById('profilePhoto'), true);
+    });
 
-        // Verification bubble functionality
-        const verificationBubble = document.getElementById('verification-bubble');
-        const verificationCheckbox = document.getElementById('verification-checkbox');
-        const businessCheckbox = document.getElementById('business-checkbox');
-        const verifiedBadges = document.querySelectorAll('.verification-badge');
-        const businessBadge = document.getElementById('business-badge');
+    document.getElementById('businessInput').addEventListener('change', function() {
+      handleFileSelect(this, document.getElementById('businessBadge'));
+    });
 
-        // Show verification bubble
-        verificationBubble.classList.add('show');
+    // Toggle verification badge
+    document.getElementById('verifiedToggle').addEventListener('change', function() {
+      const verifiedBadge = document.querySelector('.verified');
+      verifiedBadge.style.display = this.checked ? 'inline-block' : 'none';
+    });
 
-        // Handle verification checkbox
-        verificationCheckbox.addEventListener('change', (e) => {
-            verifiedBadges.forEach(badge => {
-                badge.style.display = e.target.checked ? 'inline-block' : 'none';
-            });
-        });
+    // Toggle business badge
+    document.getElementById('businessToggle').addEventListener('change', function() {
+      const businessBadge = document.getElementById('businessBadge');
+      businessBadge.style.display = this.checked ? 'inline-block' : 'none';
+    });
 
-        // Handle business checkbox
-        businessCheckbox.addEventListener('change', (e) => {
-            businessBadge.style.display = e.target.checked ? 'inline-block' : 'none';
-        });
-
-        // Tab functionality
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-            });
-        });
-
-        // Prevent newlines in single-line editable elements
-        document.querySelectorAll('.editable').forEach(element => {
-            element.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
+    // Initialize badges as hidden
+    document.querySelector('.verified').style.display = 'none';
+    document.getElementById('businessBadge').style.display = 'none';
+  </script>
+</body>
+</html>
