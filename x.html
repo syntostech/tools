@@ -28,6 +28,17 @@
       cursor: pointer;
     }
 
+    .banner-area:hover::after {
+      content: 'Click to edit banner';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.7);
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
+
     .profile-photo-container {
       position: absolute;
       top: 140px;
@@ -46,6 +57,18 @@
       background-position: center;
     }
 
+    .profile-photo-container:hover::after {
+      content: 'Click to edit photo';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.7);
+      padding: 8px 16px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
     .profile-content {
       padding: 72px 16px 16px;
       background-color: #000000;
@@ -58,8 +81,6 @@
       margin-bottom: 4px;
       cursor: pointer;
       position: relative;
-      padding-top: 30px;
-      margin-top: -30px;
     }
 
     .name {
@@ -108,18 +129,12 @@
       color: #8899a6;
       margin-bottom: 12px;
       cursor: pointer;
-      position: relative;
-      margin-top: 8px;
-      padding-top: 30px;
     }
 
     .url {
       color: #1da1f2;
       margin-bottom: 12px;
       cursor: pointer;
-      position: relative;
-      margin-top: 8px;
-      padding-top: 30px;
     }
 
     .stats {
@@ -133,45 +148,18 @@
       font-weight: bold;
     }
 
-    .hidden {
-      display: none;
-    }
-
-    .banner-area:hover::after,
-    .profile-photo-container:hover::after,
     [contenteditable]:hover::after {
       content: 'Click to edit';
       position: absolute;
       background: rgba(0,0,0,0.7);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      white-space: nowrap;
-      pointer-events: none;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 8px;
     }
 
-    .banner-area:hover::after {
-      content: 'Click to edit banner';
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .profile-photo-container:hover::after {
-      content: 'Click to edit photo';
-      bottom: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    [contenteditable]:hover::after {
-      top: -30px;
-      left: 0;
-      transform: none;
-    }
-
-    [contenteditable] {
-      position: relative;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
@@ -219,6 +207,7 @@
   </div>
 
   <script>
+    // File handling functions
     function handleFileSelect(input, targetElement, isProfilePhoto = false) {
       const file = input.files[0];
       if (file) {
