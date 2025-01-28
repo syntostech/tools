@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+            background-color: #000;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            margin: 0;
+            color: #4ade80;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            animation: glitch 1s infinite;
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            color: #4ade80;
+        }
+
+        .error-description {
+            font-size: 1rem;
+            margin: 1rem 0;
+            color: #666;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.8rem 1.5rem;
+            background-color: transparent;
+            border: 2px solid #4ade80;
+            color: #4ade80;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background-color: #4ade80;
+            color: #000;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        .terminal-text {
+            margin-top: 2rem;
+            font-family: monospace;
+            color: #666;
+            text-align: left;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: #4ade80;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="error-code">404</h1>
+        <div class="error-message">Page Not Found</div>
+        <div class="error-description">The page you're looking for doesn't exist or has been moved.</div>
+        <div class="terminal-text">
+            <span id="terminal"></span><span class="cursor"></span>
+        </div>
+        <a href="/" class="back-button">Return Home</a>
+    </div>
+
+    <script>
+        const text = "$ searching_for_page.exe\nERROR: File not found in directory\n$ attempting_recovery.exe\nRECOVERY FAILED: Please return to homepage";
+        const terminal = document.getElementById('terminal');
+        let index = 0;
+
+        function typeWriter() {
+            if (index < text.length) {
+                terminal.innerHTML += text.charAt(index) === '\n' ? '<br>' : text.charAt(index);
+                index++;
+                setTimeout(typeWriter, Math.random() * 50 + 30);
+            }
+        }
+
+        typeWriter();
+    </script>
+</body>
+</html>
