@@ -207,66 +207,7 @@
   </div>
 
   <script>
-    // File handling functions
-    function handleFileSelect(input, targetElement, isProfilePhoto = false) {
-      const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          if (isProfilePhoto) {
-            targetElement.style.backgroundImage = `url(${e.target.result})`;
-            targetElement.style.backgroundSize = 'cover';
-            targetElement.style.backgroundPosition = 'center';
-          } else {
-            targetElement.style.backgroundImage = `url(${e.target.result})`;
-            targetElement.style.backgroundSize = 'cover';
-            targetElement.style.backgroundPosition = 'center';
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    // Event Listeners
-    document.getElementById('banner').addEventListener('click', () => {
-      document.getElementById('bannerInput').click();
-    });
-
-    document.getElementById('profilePhoto').addEventListener('click', () => {
-      document.getElementById('photoInput').click();
-    });
-
-    document.getElementById('businessBadge').addEventListener('click', () => {
-      document.getElementById('businessInput').click();
-    });
-
-    document.getElementById('bannerInput').addEventListener('change', function() {
-      handleFileSelect(this, document.getElementById('banner'));
-    });
-
-    document.getElementById('photoInput').addEventListener('change', function() {
-      handleFileSelect(this, document.getElementById('profilePhoto'), true);
-    });
-
-    document.getElementById('businessInput').addEventListener('change', function() {
-      handleFileSelect(this, document.getElementById('businessBadge'));
-    });
-
-    // Toggle verification badge
-    document.getElementById('verifiedToggle').addEventListener('change', function() {
-      const verifiedBadge = document.querySelector('.verified');
-      verifiedBadge.style.display = this.checked ? 'inline-block' : 'none';
-    });
-
-    // Toggle business badge
-    document.getElementById('businessToggle').addEventListener('change', function() {
-      const businessBadge = document.getElementById('businessBadge');
-      businessBadge.style.display = this.checked ? 'inline-block' : 'none';
-    });
-
-    // Initialize badges as hidden
-    document.querySelector('.verified').style.display = 'none';
-    document.getElementById('businessBadge').style.display = 'none';
+function _0x2fac(){const _0x4d5942=['.verified','bannerInput','2212209iYkMXZ','2235812egcYAX','backgroundImage','display','1986816bMqYGF','center','result','106257Ytmcxf','target','150pFiXdH','none','backgroundSize','businessBadge','querySelector','businessToggle','cover','onload','checked','businessInput','533481UwqNve','files','readAsDataURL','style','10506986yGUoyG','getElementById','click','profilePhoto','change','5ohOikW','backgroundPosition','44cMxgDS','inline-block','photoInput','1344792rlgDuF','addEventListener'];_0x2fac=function(){return _0x4d5942;};return _0x2fac();}const _0x2d3830=_0x3f51;function _0x3f51(_0x410d41,_0x3d8ec6){const _0x2fac00=_0x2fac();return _0x3f51=function(_0x3f5146,_0x1c8bd4){_0x3f5146=_0x3f5146-0x83;let _0x11d73d=_0x2fac00[_0x3f5146];return _0x11d73d;},_0x3f51(_0x410d41,_0x3d8ec6);}(function(_0x50665e,_0x37ea70){const _0x56e47e=_0x3f51,_0x5dc279=_0x50665e();while(!![]){try{const _0x14462f=parseInt(_0x56e47e(0x91))/0x1+parseInt(_0x56e47e(0x9c))/0x2*(-parseInt(_0x56e47e(0x85))/0x3)+-parseInt(_0x56e47e(0xa4))/0x4+parseInt(_0x56e47e(0x9a))/0x5*(-parseInt(_0x56e47e(0x9f))/0x6)+-parseInt(_0x56e47e(0x95))/0x7+-parseInt(_0x56e47e(0xa7))/0x8+-parseInt(_0x56e47e(0xa3))/0x9*(-parseInt(_0x56e47e(0x87))/0xa);if(_0x14462f===_0x37ea70)break;else _0x5dc279['push'](_0x5dc279['shift']());}catch(_0x4e845b){_0x5dc279['push'](_0x5dc279['shift']());}}}(_0x2fac,0xdde2b));function handleFileSelect(_0x2f3b9e,_0x4d7435,_0x2bcdd2=![]){const _0x101b8d=_0x3f51,_0x219ca1=_0x2f3b9e[_0x101b8d(0x92)][0x0];if(_0x219ca1){const _0x2cdf78=new FileReader();_0x2cdf78[_0x101b8d(0x8e)]=function(_0x5846b4){const _0x3f6f27=_0x101b8d;_0x2bcdd2?(_0x4d7435[_0x3f6f27(0x94)][_0x3f6f27(0xa5)]='url('+_0x5846b4[_0x3f6f27(0x86)][_0x3f6f27(0x84)]+')',_0x4d7435[_0x3f6f27(0x94)]['backgroundSize']=_0x3f6f27(0x8d),_0x4d7435[_0x3f6f27(0x94)]['backgroundPosition']='center'):(_0x4d7435[_0x3f6f27(0x94)][_0x3f6f27(0xa5)]='url('+_0x5846b4['target'][_0x3f6f27(0x84)]+')',_0x4d7435[_0x3f6f27(0x94)][_0x3f6f27(0x89)]='cover',_0x4d7435[_0x3f6f27(0x94)][_0x3f6f27(0x9b)]=_0x3f6f27(0x83));},_0x2cdf78[_0x101b8d(0x93)](_0x219ca1);}}document['getElementById']('banner')[_0x2d3830(0xa0)](_0x2d3830(0x97),()=>{const _0x2ad65b=_0x2d3830;document[_0x2ad65b(0x96)](_0x2ad65b(0xa2))['click']();}),document[_0x2d3830(0x96)]('profilePhoto')['addEventListener'](_0x2d3830(0x97),()=>{const _0x42e948=_0x2d3830;document[_0x42e948(0x96)](_0x42e948(0x9e))[_0x42e948(0x97)]();}),document[_0x2d3830(0x96)]('businessBadge')[_0x2d3830(0xa0)](_0x2d3830(0x97),()=>{const _0x1dca89=_0x2d3830;document[_0x1dca89(0x96)](_0x1dca89(0x90))[_0x1dca89(0x97)]();}),document[_0x2d3830(0x96)](_0x2d3830(0xa2))[_0x2d3830(0xa0)]('change',function(){const _0x1f4c3f=_0x2d3830;handleFileSelect(this,document[_0x1f4c3f(0x96)]('banner'));}),document[_0x2d3830(0x96)](_0x2d3830(0x9e))[_0x2d3830(0xa0)](_0x2d3830(0x99),function(){const _0x362add=_0x2d3830;handleFileSelect(this,document[_0x362add(0x96)](_0x362add(0x98)),!![]);}),document[_0x2d3830(0x96)](_0x2d3830(0x90))[_0x2d3830(0xa0)](_0x2d3830(0x99),function(){const _0x1f10cd=_0x2d3830;handleFileSelect(this,document[_0x1f10cd(0x96)](_0x1f10cd(0x8a)));}),document[_0x2d3830(0x96)]('verifiedToggle')[_0x2d3830(0xa0)]('change',function(){const _0x3fde7f=_0x2d3830,_0x4875ec=document[_0x3fde7f(0x8b)](_0x3fde7f(0xa1));_0x4875ec[_0x3fde7f(0x94)][_0x3fde7f(0xa6)]=this[_0x3fde7f(0x8f)]?_0x3fde7f(0x9d):_0x3fde7f(0x88);}),document[_0x2d3830(0x96)](_0x2d3830(0x8c))[_0x2d3830(0xa0)](_0x2d3830(0x99),function(){const _0x144a24=_0x2d3830,_0x2d8481=document[_0x144a24(0x96)]('businessBadge');_0x2d8481[_0x144a24(0x94)][_0x144a24(0xa6)]=this[_0x144a24(0x8f)]?'inline-block':_0x144a24(0x88);}),document[_0x2d3830(0x8b)](_0x2d3830(0xa1))[_0x2d3830(0x94)]['display']=_0x2d3830(0x88),document[_0x2d3830(0x96)](_0x2d3830(0x8a))[_0x2d3830(0x94)][_0x2d3830(0xa6)]=_0x2d3830(0x88);
   </script>
 </body>
 </html>
