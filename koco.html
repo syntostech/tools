@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Asistente Virtual de Préstamos</title>
+    <meta name="description" content="Tu compañero virtual para solicitar préstamos en Panamá">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00b0ff;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --text: #0f172a;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #87CEEB 0%, #ffffff 100%);
+        }
+
+        .parrot-static {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 400px;
+            height: 400px;
+            z-index: 10;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .parrot-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform: scaleX(-1);
+            margin-bottom: -20px;
+            margin-left: -20px;
+        }
+
+        .chat-container {
+            position: fixed;
+            left: 55%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            padding: 2rem;
+            z-index: 20;
+        }
+
+        .message-container {
+            font-size: 1.5rem;
+            line-height: 1.5;
+            color: var(--text);
+            min-height: 100px;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
+            box-shadow: 0 4px 20px -5px rgb(0 176 255 / 0.15);
+            backdrop-filter: blur(8px);
+        }
+
+        .shortcode {
+            font-size: 1.25rem;
+            color: var(--primary);
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .shortcode.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .skip-button {
+            position: fixed;
+            right: 2rem;
+            top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            transition: opacity 0.3s ease;
+            z-index: 30;
+        }
+
+        .skip-button:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 1024px) {
+            .chat-container {
+                width: 600px;
+                left: 60%;
+            }
+            
+            .parrot-static {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 90%;
+                padding: 1rem;
+                left: 50%;
+            }
+
+            .parrot-static {
+                width: 200px;
+                height: 200px;
+            }
+
+            .message-container {
+                font-size: 1.25rem;
+                padding: 1.5rem;
+            }
+
+            .skip-button {
+                right: 1rem;
+                top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="parrot-static">
+        <img src="https://www.syntos.xyz/cdn/img/image.png" alt="Parrot Assistant" class="parrot-image">
+    </div>
+    <button id="skipButton" class="skip-button">Omitir animación</button>
+    <section class="chat-container">
+        <div id="messageContainer" class="message-container"></div>
+        <div id="shortcode" class="shortcode">shortcode-369</div>
+    </section>
+
+    <audio id="parrotSound" preload="auto">
+        <source src="https://www.syntos.xyz/cdn/img/a-bird-chirping-74574.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const messages = [
+            "Hola, soy tu compañero virtual para solicitar un préstamo en Panamá",
+            "Yo te ayudaré a encontrar la mejor oferta para que puedas cumplir tus metas",
+            "Llena el formulario para que unos de mis asesores te ayude"
+        ];
+
+        const messageContainer = document.getElementById('messageContainer');
+        const shortcodeElement = document.getElementById('shortcode');
+        const skipButton = document.getElementById('skipButton');
+        const parrotSound = document.getElementById('parrotSound');
+        let currentMessageIndex = 0;
+        let isTyping = false;
+        let typewriterTimeout;
+
+        function playParrotSound() {
+            parrotSound.currentTime = 0;
+            parrotSound.play().catch(e => {
+                console.log("Sound couldn't be played:", e);
+            });
+        }
+
+        function skipAnimation() {
+            clearTimeout(typewriterTimeout);
+            messageContainer.textContent = messages[messages.length - 1];
+            currentMessageIndex = messages.length;
+            shortcodeElement.classList.add('visible');
+            skipButton.style.display = 'none';
+            playParrotSound();
+        }
+
+        function typeWriter(message, callback) {
+            let charIndex = 0;
+            messageContainer.textContent = '';
+            isTyping = true;
+            
+            playParrotSound();
+            
+            function type() {
+                if (charIndex < message.length) {
+                    messageContainer.textContent += message.charAt(charIndex);
+                    charIndex++;
+                    typewriterTimeout = setTimeout(type, 50);
+                } else {
+                    isTyping = false;
+                    setTimeout(callback, 2000);
+                }
+            }
+            
+            type();
+        }
+
+        function showNextMessage() {
+            if (currentMessageIndex < messages.length - 1) {
+                typeWriter(messages[currentMessageIndex], () => {
+                    currentMessageIndex++;
+                    showNextMessage();
+                });
+            } else {
+                typeWriter(messages[messages.length - 1], () => {
+                    shortcodeElement.classList.add('visible');
+                    skipButton.style.display = 'none';
+                });
+            }
+        }
+
+        skipButton.addEventListener('click', skipAnimation);
+
+        window.addEventListener('load', () => {
+            showNextMessage();
+        });
+    </script>
+</body>
+</html>
