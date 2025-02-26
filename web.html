@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>advanced website previewer</title>
+  <style>
+    :root {
+      --primary-color: #4a6cf7;
+      --secondary-color: #2a2a2a;
+      --text-color: #e0e0e0;
+      --accent-color: #ff6b6b;
+      --app-bg: #121212;
+      --card-bg: #1e1e1e;
+      --border-color: #333;
+      --input-bg: #2a2a2a;
+      --chrome-bg: #202124;
+      --chrome-border: #3c4043;
+      --tab-bg: #292b2f;
+      --active-tab-bg: #323639;
+      --tab-text: #9aa0a6;
+      --active-tab-text: #e8eaed;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background-color: var(--app-bg);
+      color: var(--text-color);
+      padding-bottom: 80px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      margin-bottom: 30px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+    
+    .header h1 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      color: #aaa;
+    }
+    
+    .domain-input {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      justify-content: center;
+    }
+    
+    .domain-input input {
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      width: 60%;
+      font-size: 16px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+    }
+    
+    .domain-input button {
+      padding: 12px 25px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .domain-input button:hover {
+      background-color: #3a57d5;
+      transform: translateY(-2px);
+    }
+    
+    .preview-container {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      margin-bottom: 30px;
+      border: 1px solid var(--border-color);
+    }
+    
+    /* Modern Windows Chrome browser frame */
+    .browser-frame {
+      background-color: var(--chrome-bg);
+      border-bottom: 1px solid var(--chrome-border);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .browser-tabs {
+      display: flex;
+      background-color: var(--chrome-bg);
+      padding: 0 4px;
+      height: 36px;
+      align-items: flex-end;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    
+    .browser-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .browser-tab {
+      display: flex;
+      align-items: center;
+      background-color: var(--tab-bg);
+      border-radius: 8px 8px 0 0;
+      padding: 0 15px;
+      height: 32px;
+      margin-right: 2px;
+      min-width: 180px;
+      max-width: 220px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: var(--tab-text);
+      font-size: 12px;
+      transition: background-color 0.2s;
+    }
+    
+    .browser-tab.active {
+      background-color: var(--active-tab-bg);
+      color: var(--active-tab-text);
+      z-index: 1;
+    }
+    
+    .tab-favicon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .tab-favicon img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    
+    .tab-close {
+      margin-left: auto;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    
+    .tab-close:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .new-tab-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      height: 32px;
+      font-size: 18px;
+      color: var(--tab-text);
+      cursor: pointer;
+    }
+    
+    .browser-toolbar {
+      display: flex;
+      padding: 8px 10px;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .browser-buttons {
+      display: flex;
+      gap: 16px;
+      margin-right: 12px;
+    }
+    
+    .browser-button {
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9aa0a6;
+      font-size: 14px;
+    }
+    
+    .browser-address-bar {
+      display: flex;
+      align-items: center;
+      background-color: #292b2f;
+      flex-grow: 1;
+      border-radius: 24px;
+      height: 36px;
+      padding: 0 12px;
+      color: var(--active-tab-text);
+      font-size: 14px;
+      overflow: hidden;
+    }
+    
+    .address-prefix {
+      display: flex;
+      align-items: center;
+      color: #9aa0a6;
+      margin-right: 6px;
+    }
+    
+    .address-prefix .lock-icon {
+      margin-right: 6px;
+      color: #8ab4f8;
+      font-size: 14px;
+    }
+    
+    .domain-text {
+      color: var(--active-tab-text);
+      white-space: nowrap;
+    }
+    
+    .browser-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 12px;
+    }
+    
+    .browser-action-button {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9aa0a6;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    
+    .browser-action-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .profile-button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #8ab4f8;
+      color: #202124;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    /* This is the container that will change with user customizations */
+    .website-preview {
+      padding: 30px;
+      min-height: 400px;
+      transition: all 0.5s ease;
+      background-color: #121212; /* Default dark background */
+    }
+    
+    .website-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .preview-site-title {
+      font-size: 2.5rem;
+      color: #e0e0e0; /* Default light text for dark mode */
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .preview-tagline {
+      font-size: 1.2rem;
+      color: #aaa;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .preview-paragraph {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #e0e0e0; /* Default light text for dark mode */
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .preview-button {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 500;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .preview-button:hover {
+      background-color: #3a57d5;
+      transform: translateY(-2px);
+    }
+    
+    .customizer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--card-bg);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      z-index: 1000;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .customizer-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      justify-content: center;
+    }
+    
+    .customizer-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .customizer-group label {
+      font-size: 14px;
+      color: #aaa;
+    }
+    
+    .customizer-group select,
+    .customizer-group input {
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 14px;
+      min-width: 150px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+    }
+    
+    .color-picker {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .color-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid var(--border-color);
+    }
+    
+    .color-input {
+      position: absolute;
+      width: 150%;
+      height: 150%;
+      top: -25%;
+      left: -25%;
+      cursor: pointer;
+      opacity: 0;
+    }
+    
+    .file-input-container {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      cursor: pointer;
+    }
+    
+    .file-input-label {
+      padding: 8px 12px;
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      border-radius: 5px;
+      display: inline-block;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    
+    .file-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 50px 0;
+    }
+    
+    .loading-spinner {
+      border: 4px solid #333;
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease forwards;
+      opacity: 0;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .animate-slide-up {
+      animation: slideUp 0.5s ease forwards;
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-secure {
+      animation: securePulse 1s ease-in-out;
+    }
+    
+    @keyframes securePulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    /* Mobile responsiveness improvements */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .customizer {
+        padding: 10px;
+      }
+      
+      .customizer-content {
+        gap: 10px;
+      }
+      
+      .customizer-group {
+        width: calc(50% - 10px);
+        min-width: 120px;
+      }
+      
+      .customizer-group select,
+      .customizer-group input {
+        min-width: 0;
+        width: 100%;
+      }
+      
+      .domain-input {
+        flex-direction: column;
+      }
+      
+      .domain-input input {
+        width: 100%;
+      }
+      
+      .website-preview {
+        padding: 20px;
+      }
+      
+      .preview-site-title {
+        font-size: 2rem;
+      }
+      
+      .browser-tabs {
+        height: 32px;
+      }
+      
+      .browser-tab {
+        min-width: 120px;
+        padding: 0 10px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .customizer-group {
+        width: 100%;
+      }
+      
+      .customizer-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .browser-address-bar {
+        font-size: 12px;
+      }
+      
+      .preview-site-title {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Website Preview Tool</h1>
+      <p>Visualize your brand before purchasing a domain</p>
+    </div>
+    
+    <div class="domain-input">
+      <input type="text" id="domainInput" placeholder="Enter your domain (e.g., mybrand.com)">
+      <button id="previewButton">Generate Preview</button>
+    </div>
+    
+    <div class="loading" id="loadingIndicator">
+      <div class="loading-spinner"></div>
+      <p>Generating preview...</p>
+    </div>
+    
+    <div class="preview-container" id="previewContainer" style="display: none;">
+      <div class="browser-frame">
+        <div class="browser-tabs">
+          <div class="browser-tab" data-tab="placeholder1">
+            <div class="tab-favicon"><i class="fas fa-globe"></i></div>
+            <span>Youtube</span>
+            <div class="tab-close"><i class="fas fa-times"></i></div>
+          </div>
+          <div class="browser-tab" data-tab="placeholder2">
+            <div class="tab-favicon"><i class="fas fa-globe"></i></div>
+            <span>Spaceship</span>
+            <div class="tab-close"><i class="fas fa-times"></i></div>
+          </div>
+          <div class="browser-tab" data-tab="placeholder3">
+            <div class="tab-favicon"><i class="fas fa-globe"></i></div>
+            <span>Claude</span>
+            <div class="tab-close"><i class="fas fa-times"></i></div>
+          </div>
+          <div class="browser-tab active" id="previewTab">
+            <div class="tab-favicon" id="tabFavicon">
+              <i class="fas fa-globe"></i>
+            </div>
+            <span id="tabTitle">Website Preview</span>
+            <div class="tab-close"><i class="fas fa-times"></i></div>
+          </div>
+          <div class="browser-tab" data-tab="placeholder4">
+            <div class="tab-favicon"><i class="fas fa-globe"></i></div>
+            <span>Github</span>
+            <div class="tab-close"><i class="fas fa-times"></i></div>
+          </div>
+          <div class="new-tab-button">
+            <i class="fas fa-plus"></i>
+          </div>
+        </div>
+        
+        <div class="browser-toolbar">
+          <div class="browser-buttons">
+            <div class="browser-button"><i class="fas fa-arrow-left"></i></div>
+            <div class="browser-button"><i class="fas fa-arrow-right"></i></div>
+            <div class="browser-button"><i class="fas fa-redo"></i></div>
+            <div class="browser-button"><i class="fas fa-home"></i></div>
+          </div>
+          
+          <div class="browser-address-bar">
+            <div class="address-prefix">
+              <span class="lock-icon"><i class="fas fa-lock"></i></span>
+            </div>
+            <span class="domain-text" id="domainDisplay">example.com</span>
+          </div>
+          
+          <div class="browser-actions">
+            <div class="browser-action-button"><i class="fas fa-star"></i></div>
+            <div class="browser-action-button"><i class="fas fa-ellipsis-v"></i></div>
+            <div class="profile-button">U</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="website-preview" id="websitePreview">
+        <div class="website-content">
+          <h1 class="preview-site-title" id="previewTitle">Your Brand Name</h1>
+          <p class="preview-tagline" id="previewTagline">An innovative solution for modern problems</p>
+          <p class="preview-paragraph" id="previewParagraph1">Welcome to our website! We're dedicated to providing high-quality services that meet your needs. Our team of experts is passionate about delivering exceptional experiences that exceed your expectations.</p>
+          <p class="preview-paragraph" id="previewParagraph2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+          <a href="#" class="preview-button" id="previewCTA">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="customizer" id="customizer" style="display: none;">
+    <div class="customizer-content">
+      <div class="customizer-group">
+        <label for="fontSelector">Font Style</label>
+        <select id="fontSelector">
+          <option value="Poppins">Poppins</option>
+          <option value="Roboto">Roboto</option>
+          <option value="Open Sans">Open Sans</option>
+          <option value="Montserrat">Montserrat</option>
+          <option value="Lato">Lato</option>
+          <option value="Playfair Display">Playfair Display</option>
+          <option value="Oswald">Oswald</option>
+          <option value="Raleway">Raleway</option>
+        </select>
+      </div>
+      
+      <div class="customizer-group">
+        <label>Primary Color</label>
+        <div class="color-option" style="background-color: #4a6cf7;">
+          <input type="color" class="color-input" id="primaryColorPicker" value="#4a6cf7">
+        </div>
+      </div>
+      
+      <div class="customizer-group">
+        <label>Text Color</label>
+        <div class="color-option" style="background-color: #e0e0e0;">
+          <input type="color" class="color-input" id="textColorPicker" value="#e0e0e0">
+        </div>
+      </div>
+      
+      <div class="customizer-group">
+        <label>Accent Color</label>
+        <div class="color-option" style="background-color: #ff6b6b;">
+          <input type="color" class="color-input" id="accentColorPicker" value="#ff6b6b">
+        </div>
+      </div>
+      
+      <div class="customizer-group">
+        <label>Background Color</label>
+        <div class="color-option" style="background-color: #121212;">
+          <input type="color" class="color-input" id="bgColorPicker" value="#121212">
+        </div>
+      </div>
+      
+      <div class="customizer-group">
+        <label for="titleText">Site Title</label>
+        <input type="text" id="titleText" placeholder="Site Title">
+      </div>
+      
+      <div class="customizer-group">
+        <label for="taglineText">Tagline</label>
+        <input type="text" id="taglineText" placeholder="Tagline">
+      </div>
+      
+      <div class="customizer-group">
+        <label for="faviconUpload">Favicon</label>
+        <div class="file-input-container">
+          <label class="file-input-label" id="faviconLabel">Choose file</label>
+          <input type="file" id="faviconUpload" class="file-input" accept="image/*">
+        </div>
+      </div>
+      
+      <div class="customizer-group">
+        <label for="logoUpload">Logo</label>
+        <div class="file-input-container">
+          <label class="file-input-label" id="logoLabel">Choose file</label>
+          <input type="file" id="logoUpload" class="file-input" accept="image/*">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Load Google Fonts
+    function loadGoogleFonts() {
+      const fonts = [
+        'Poppins:400,500,600,700',
+        'Roboto:400,500,700',
+        'Open+Sans:400,600,700',
+        'Montserrat:400,500,600,700',
+        'Lato:400,700',
+        'Playfair+Display:400,700',
+        'Oswald:400,500,600',
+        'Raleway:400,500,600,700'
+      ];
+      
+      const fontLink = document.createElement('link');
+      fontLink.rel = 'stylesheet';
+      fontLink.href = `https://fonts.googleapis.com/css2?${fonts.map(font => `family=${font}`).join('&')}&display=swap`;
+      document.head.appendChild(fontLink);
+    }
+    
+    loadGoogleFonts();
+    
+    // DOM elements
+    const domainInput = document.getElementById('domainInput');
+    const previewButton = document.getElementById('previewButton');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const previewContainer = document.getElementById('previewContainer');
+    const customizer = document.getElementById('customizer');
+    const domainDisplay = document.getElementById('domainDisplay');
+    const secureIcon = document.querySelector('.lock-icon');
+    const websitePreview = document.getElementById('websitePreview');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewTagline = document.getElementById('previewTagline');
+    const previewParagraph1 = document.getElementById('previewParagraph1');
+    const previewParagraph2 = document.getElementById('previewParagraph2');
+    const previewCTA = document.getElementById('previewCTA');
+    const tabTitle = document.getElementById('tabTitle');
+    const tabFavicon = document.getElementById('tabFavicon');
+    const faviconUpload = document.getElementById('faviconUpload');
+    const logoUpload = document.getElementById('logoUpload');
+    const faviconLabel = document.getElementById('faviconLabel');
+    const logoLabel = document.getElementById('logoLabel');
+    
+    // Customizer controls
+    const fontSelector = document.getElementById('fontSelector');
+    const primaryColorPicker = document.getElementById('primaryColorPicker');
+    const textColorPicker = document.getElementById('textColorPicker');
+    const accentColorPicker = document.getElementById('accentColorPicker');
+    const bgColorPicker = document.getElementById('bgColorPicker');
+    const titleText = document.getElementById('titleText');
+    const taglineText = document.getElementById('taglineText');
+    
+    // Update color picker background when value changes
+    function updateColorPickerBackground(picker) {
+      picker.parentElement.style.backgroundColor = picker.value;
+      
+      // Add visible border for light colors
+      const color = picker.value.toLowerCase();
+      if (color === "#ffffff" || color === "#fff" || isLightColor(color)) {
+        picker.parentElement.style.border = "2px solid #666";
+      } else {
+        picker.parentElement.style.border = "2px solid var(--border-color)";
+      }
+    }
+    
+    // Check if a color is light (needs darker border)
+    function isLightColor(color) {
+      // Convert hex to RGB
+      let r, g, b;
+      
+      if (color.startsWith('#')) {
+        if (color.length === 4) {
+          r = parseInt(color[1] + color[1], 16);
+          g = parseInt(color[2] + color[2], 16);
+          b = parseInt(color[3] + color[3], 16);
+        } else {
+          r = parseInt(color.slice(1, 3), 16);
+          g = parseInt(color.slice(3, 5), 16);
+          b = parseInt(color.slice(5, 7), 16);
+        }
+        
+        // Calculate perceived brightness (YIQ equation)
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness > 125; // Brightness threshold
+      }
+      
+      return false;
+    }
+    
+    // Handle file input for favicon and logo
+    faviconUpload.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        faviconLabel.textContent = file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          // Update tab favicon
+          tabFavicon.innerHTML = '';
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          tabFavicon.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    logoUpload.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        logoLabel.textContent = file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          // You can update website preview with logo if needed
+          // For example, add a logo to the header of the website preview
+          const websiteHeader = document.querySelector('.website-content');
+          
+          // Check if logo already exists and remove it
+          const existingLogo = document.getElementById('preview-logo');
+          if (existingLogo) {
+            existingLogo.remove();
+          }
+          
+          // Create and add logo
+          const logoImg = document.createElement('img');
+          logoImg.src = e.target.result;
+          logoImg.id = 'preview-logo';
+          logoImg.style.maxHeight = '60px';
+          logoImg.style.marginBottom = '20px';
+          logoImg.style.display = 'block';
+          
+          websiteHeader.insertBefore(logoImg, websiteHeader.firstChild);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Tab click handling
+    document.querySelectorAll('.browser-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.browser-tab').forEach(t => {
+          t.classList.remove('active');
+        });
+        tab.classList.add('active');
+      });
+    });
+    
+    // Generate preview
+    previewButton.addEventListener('click', () => {
+      const domain = domainInput.value.trim();
+      
+      if (!domain) {
+        alert('Please enter a domain name');
+        return;
+      }
+      
+      // Show loading indicator
+      previewContainer.style.display = 'none';
+      customizer.style.display = 'none';
+      loadingIndicator.style.display = 'block';
+      
+      // Simulate loading (1 second)
+      setTimeout(() => {
+        loadingIndicator.style.display = 'none';
+        previewContainer.style.display = 'block';
+        customizer.style.display = 'block';
+        
+        // Update domain display
+        let displayDomain = domain;
+
+        // Add https:// if it doesn't have a protocol
+        if (!displayDomain.startsWith('http://') && !displayDomain.startsWith('https://')) {
+          displayDomain = 'https://' + displayDomain;
+        }
+        
+        // Extract just the domain for display
+        try {
+          const url = new URL(displayDomain);
+          domainDisplay.textContent = url.hostname;
+          
+          // Update tab title
+          tabTitle.textContent = url.hostname;
+        } catch (e) {
+          domainDisplay.textContent = domain;
+          tabTitle.textContent = domain;
+        }
+        
+        // Generate website title from domain
+        let siteName = domain.split('.')[0];
+        
+        // Make domain name look nicer (capitalize, remove hyphens, etc.)
+        siteName = siteName
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, l => l.toUpperCase());
+        
+        // Apply defaults
+        previewTitle.textContent = siteName;
+        previewTagline.textContent = 'Welcome to ' + siteName;
+        
+        // Update customizer inputs
+        titleText.value = siteName;
+        taglineText.value = 'Welcome to ' + siteName;
+        
+        // Add animation classes
+        previewTitle.classList.add('animate-fade-in');
+        previewTagline.classList.add('animate-fade-in');
+        previewParagraph1.classList.add('animate-slide-up');
+        previewParagraph2.classList.add('animate-slide-up');
+        previewCTA.classList.add('animate-slide-up');
+        secureIcon.classList.add('animate-secure');
+        
+        // Remove animation classes after animation completes
+        setTimeout(() => {
+          previewTitle.classList.remove('animate-fade-in');
+          previewTagline.classList.remove('animate-fade-in');
+          previewParagraph1.classList.remove('animate-slide-up');
+          previewParagraph2.classList.remove('animate-slide-up');
+          previewCTA.classList.remove('animate-slide-up');
+          secureIcon.classList.remove('animate-secure');
+        }, 1000);
+      }, 1000);
+    });
+    
+    // Initialize color pickers
+    updateColorPickerBackground(primaryColorPicker);
+    updateColorPickerBackground(textColorPicker);
+    updateColorPickerBackground(accentColorPicker);
+    updateColorPickerBackground(bgColorPicker);
+    
+    // Apply customizations
+    function applyCustomizations() {
+      // Apply font
+      document.body.style.fontFamily = fontSelector.value + ", sans-serif";
+      websitePreview.style.fontFamily = fontSelector.value + ", sans-serif";
+      
+      // Apply colors
+      document.documentElement.style.setProperty('--primary-color', primaryColorPicker.value);
+      document.documentElement.style.setProperty('--text-color', textColorPicker.value);
+      document.documentElement.style.setProperty('--accent-color', accentColorPicker.value);
+      
+      // Apply background
+      websitePreview.style.backgroundColor = bgColorPicker.value;
+      
+      // Apply text colors
+      previewTitle.style.color = textColorPicker.value;
+      previewParagraph1.style.color = textColorPicker.value;
+      previewParagraph2.style.color = textColorPicker.value;
+      
+      // Apply button color
+      previewCTA.style.backgroundColor = primaryColorPicker.value;
+      
+      // Apply custom text
+      if (titleText.value) {
+        previewTitle.textContent = titleText.value;
+      }
+      
+      if (taglineText.value) {
+        previewTagline.textContent = taglineText.value;
+      }
+    }
+    
+    // Listen for customizer changes
+    fontSelector.addEventListener('change', applyCustomizations);
+    
+    primaryColorPicker.addEventListener('input', function() {
+      updateColorPickerBackground(this);
+      applyCustomizations();
+    });
+    
+    textColorPicker.addEventListener('input', function() {
+      updateColorPickerBackground(this);
+      applyCustomizations();
+    });
+    
+    accentColorPicker.addEventListener('input', function() {
+      updateColorPickerBackground(this);
+      applyCustomizations();
+    });
+    
+    bgColorPicker.addEventListener('input', function() {
+      updateColorPickerBackground(this);
+      applyCustomizations();
+    });
+    
+    titleText.addEventListener('input', applyCustomizations);
+    taglineText.addEventListener('input', applyCustomizations);
+    
+    // Initial customizations
+    applyCustomizations();
+    
+    // Add some keyboard support
+    domainInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        previewButton.click();
+      }
+    });
+</script>
+</body>
+</html>
