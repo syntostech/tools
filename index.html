@@ -108,6 +108,143 @@
             vertical-align: middle;
         }
 
+        /* Notice Banner Styles */
+        .notice-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            border-top: 1px solid rgba(255, 0, 0, 0.3);
+            color: white;
+            padding: 10px 15px;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .notice-banner.active {
+            transform: translateY(0);
+        }
+
+        /* Notice importance styles */
+        .notice-banner.info {
+            border-top-color: rgba(0, 191, 255, 0.5);
+        }
+
+        .notice-banner.warning {
+            border-top-color: rgba(255, 165, 0, 0.5);
+            background-color: rgba(25, 15, 0, 0.9);
+        }
+
+        .notice-banner.update {
+            border-top-color: rgba(0, 255, 127, 0.5);
+            background-color: rgba(0, 25, 15, 0.9);
+        }
+
+        .notice-banner.alert {
+            border-top-color: rgba(255, 0, 0, 0.5);
+            background-color: rgba(25, 0, 0, 0.9);
+        }
+
+        .notice-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notice-text {
+            font-size: 0.9rem;
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .notice-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 5px;
+        }
+
+        .notice-close:hover {
+            color: white;
+        }
+
+        /* Logs Panel */
+        .logs-panel {
+            position: fixed;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            max-height: 300px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid rgba(255, 0, 0, 0.3);
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 999;
+            display: none;
+        }
+
+        .logs-panel.active {
+            display: block;
+        }
+
+        .log-section-header {
+            font-weight: bold;
+            color: #fff;
+            margin: 10px 0 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+        }
+
+        .log-timestamp {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        /* Log type colors */
+        .log-info .log-message {
+            color: #00ff00;
+        }
+
+        .log-warning .log-message {
+            color: #ffa500;
+        }
+
+        .log-update .log-message {
+            color: #00ff7f;
+        }
+
+        .log-alert .log-message {
+            color: #ff4500;
+        }
+
+        .toggle-logs {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-decoration: underline;
+            padding: 0;
+        }
+
+        .toggle-logs:hover {
+            color: white;
+        }
+
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
@@ -129,6 +266,10 @@
 
             .tool-card {
                 padding: 0.875rem;
+            }
+
+            .notice-text {
+                font-size: 0.8rem;
             }
         }
 
@@ -156,6 +297,10 @@
             }
 
             .tool-card {
+                transition: none;
+            }
+
+            .notice-banner {
                 transition: none;
             }
         }
@@ -193,5 +338,45 @@
             -->
         </div>
     </div>
+
+    <!-- Notice Banner -->
+    <div id="noticeBanner" class="notice-banner">
+        <div class="notice-content">
+            <div id="noticeText" class="notice-text">Loading...</div>
+            <button id="toggleLogs" class="toggle-logs">Show Logs</button>
+            <button id="closeNotice" class="notice-close">×</button>
+        </div>
+    </div>
+
+    <!-- Logs Panel -->
+    <div id="logsPanel" class="logs-panel">
+        <div id="logsContainer"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="broadcast.js"></script>
+    <script>
+        // Initialize the notice system when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize broadcast system
+            if (typeof Broadcast !== 'undefined') {
+                Broadcast.init();
+            }
+
+            // Close notice button
+            document.getElementById('closeNotice').addEventListener('click', function() {
+                document.getElementById('noticeBanner').classList.remove('active');
+            });
+
+            // Toggle logs panel
+            document.getElementById('toggleLogs').addEventListener('click', function() {
+                const logsPanel = document.getElementById('logsPanel');
+                const isActive = logsPanel.classList.contains('active');
+                
+                logsPanel.classList.toggle('active');
+                this.textContent = isActive ? 'Show Logs' : 'Hide Logs';
+            });
+        });
+    </script>
 </body>
 </html>
