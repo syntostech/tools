@@ -1,382 +1,383 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Tools Collection</title>
-    <link rel="icon" href="https://d1yei2z3i6k35z.cloudfront.net/11280846/67afc14948ce0_sovereigns-favicon.png" type="image/x-icon">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto Mono', monospace;
-        }
-
-        html {
-            font-size: 16px;
-        }
-
-        body {
-            background-color: #000000;
-            color: white;
-            padding: 20px;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .header {
-            margin-bottom: clamp(1.5rem, 4vw, 2rem);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .title {
-            font-size: clamp(1.5rem, 5vw, 24px);
-            margin-bottom: clamp(0.5rem, 2vw, 8px);
-            word-wrap: break-word;
-            max-width: 100%;
-            color: white;
-        }
-
-        .description {
-            opacity: 0.7;
-            margin-bottom: clamp(0.75rem, 3vw, 1rem);
-            font-size: clamp(0.875rem, 2vw, 1rem);
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-            gap: clamp(0.75rem, 3vw, 1rem);
-            margin-top: clamp(1.5rem, 4vw, 2rem);
-        }
-
-        .tool-card {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: clamp(0.75rem, 3vw, 1rem);
-            border-radius: 15px;
-            background-color: rgba(255, 255, 255, 0.05);
-            transition: transform 0.2s, background-color 0.2s;
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .tool-card:hover, .tool-card:focus {
-            transform: translateY(-2px);
-            background-color: rgba(255, 255, 255, 0.08);
-            text-decoration: none;
-            outline: none;
-        }
-
-        .tool-card:active {
-            transform: translateY(0);
-        }
-
-        .tool-name {
-            font-size: clamp(1rem, 3vw, 1.1em);
-            margin-bottom: 0.5rem;
-            color: red;
-        }
-
-        .tool-description {
-            opacity: 0.7;
-            font-size: clamp(0.8rem, 2vw, 0.9em);
-            line-height: 1.4;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: clamp(6px, 1.5vw, 8px);
-            height: clamp(16px, 4vw, 20px);
-            background-color: white;
-            animation: blink 1s infinite;
-            margin-left: 5px;
-            vertical-align: middle;
-        }
-
-        /* Notice Banner Styles */
-        .notice-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            border-top: 1px solid rgba(255, 0, 0, 0.3);
-            color: white;
-            padding: 10px 15px;
-            z-index: 1000;
-            transform: translateY(100%);
-            transition: transform 0.3s ease-out;
-        }
-
-        .notice-banner.active {
-            transform: translateY(0);
-        }
-
-        /* Notice importance styles */
-        .notice-banner.info {
-            border-top-color: rgba(0, 191, 255, 0.5);
-        }
-
-        .notice-banner.warning {
-            border-top-color: rgba(255, 165, 0, 0.5);
-            background-color: rgba(25, 15, 0, 0.9);
-        }
-
-        .notice-banner.update {
-            border-top-color: rgba(0, 255, 127, 0.5);
-            background-color: rgba(0, 25, 15, 0.9);
-        }
-
-        .notice-banner.alert {
-            border-top-color: rgba(255, 0, 0, 0.5);
-            background-color: rgba(25, 0, 0, 0.9);
-        }
-
-        .notice-content {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .notice-text {
-            font-size: 0.9rem;
-            flex-grow: 1;
-            margin-right: 15px;
-        }
-
-        .notice-close {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 0 5px;
-        }
-
-        .notice-close:hover {
-            color: white;
-        }
-
-        /* Logs Panel */
-        .logs-panel {
-            position: fixed;
-            bottom: 40px;
-            left: 0;
-            width: 100%;
-            max-height: 300px;
-            background-color: rgba(0, 0, 0, 0.9);
-            border-top: 1px solid rgba(255, 0, 0, 0.3);
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            padding: 10px;
-            overflow-y: auto;
-            z-index: 999;
-            display: none;
-        }
-
-        .logs-panel.active {
-            display: block;
-        }
-
-        .log-section-header {
-            font-weight: bold;
-            color: #fff;
-            margin: 10px 0 5px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .log-entry {
-            margin-bottom: 5px;
-            border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
-            padding-bottom: 5px;
-        }
-
-        .log-timestamp {
-            color: #888;
-            margin-right: 10px;
-        }
-
-        /* Log type colors */
-        .log-info .log-message {
-            color: #00ff00;
-        }
-
-        .log-warning .log-message {
-            color: #ffa500;
-        }
-
-        .log-update .log-message {
-            color: #00ff7f;
-        }
-
-        .log-alert .log-message {
-            color: #ff4500;
-        }
-
-        .toggle-logs {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            font-size: 0.8rem;
-            text-decoration: underline;
-            padding: 0;
-        }
-
-        .toggle-logs:hover {
-            color: white;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* Media Queries */
-        @media (max-width: 600px) {
-            body {
-                padding: 15px 10px;
-            }
-
-            .container {
-                padding: 0 10px;
-            }
-
-            .tools-grid {
-                gap: 0.75rem;
-            }
-
-            .tool-card {
-                padding: 0.875rem;
-            }
-
-            .notice-text {
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 350px) {
-            html {
-                font-size: 14px;
-            }
-
-            .tool-card {
-                padding: 0.75rem;
-            }
-        }
-
-        /* Touch Device Optimizations */
-        @media (hover: none) {
-            .tool-card:hover {
-                transform: none;
-            }
-        }
-
-        /* Reduced Motion Preferences */
-        @media (prefers-reduced-motion: reduce) {
-            .cursor {
-                animation: none;
-            }
-
-            .tool-card {
-                transition: none;
-            }
-
-            .notice-banner {
-                transition: none;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Tools Collection</title>
+  <link rel="icon" href="https://d1yei2z3i6k35z.cloudfront.net/11280846/67afc14948ce0_sovereigns-favicon.png">
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #181818;
+      color: #fff;
+    }
+    
+    .profile-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #192734;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .banner-area {
+      height: 200px;
+      background-image: url('https://placehold.co/600x299/png');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .profile-photo-container {
+      position: absolute;
+      top: 140px;
+      left: 0;
+      cursor: pointer;
+      margin-left: 16px;
+    }
+    
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #000;
+      background-image: url('https://placehold.co/120x120/png');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    /* Style adjustment for business profile photo */
+    .business-photo {
+      border-radius: 12px;
+    }
+    
+    .profile-content {
+      padding: 72px 16px 16px;
+      background-color: #000;
+    }
+    
+    .name-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .name {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .badge {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      display: none;
+    }
+    
+    .verified-badge {
+      fill: #1DA1F2;
+    }
+    
+    .business-badge {
+      fill: #FFD700;
+    }
+    
+    .affiliate-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      display: none;
+    }
+    
+    .affiliate-badge {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      background-image: url('https://placehold.co/50x50/png');
+      background-size: cover;
+      background-position: center;
+      border-radius: 4px;
+    }
+    
+    .username, .url {
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+    
+    .username {
+      color: #8899a6;
+    }
+    
+    .url {
+      color: #1da1f2;
+    }
+    
+    .stats {
+      display: flex;
+      gap: 20px;
+      color: #8899a6;
+    }
+    
+    .stat-number {
+      color: #fff;
+      font-weight: 700;
+    }
+    
+    .toggle-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, .8);
+      padding: 10px 20px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 1000;
+    }
+    
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #fff;
+    }
+    
+    [contenteditable] {
+      position: relative;
+    }
+    
+    .toolbox {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: white;
+      pointer-events: none;
+      display: none;
+      z-index: 100;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1 class="title">Web Tools Collection<span class="cursor"></span></h1>
-            <p class="description">a collection of useful web tools for everyday tasks</p>
-        </header>
-        <div class="tools-grid">
-            <a href="/web" class="tool-card">
-                <h2 class="tool-name">advanced web previewer</h2>
-                <p class="tool-description">take better branding decisions before making any move in your business</p>
-            </a>
-            <a href="/whatsapp" class="tool-card">
-                <h2 class="tool-name">whatsApp link generator</h2>
-                <p class="tool-description">create custom whatsApp message links with country codes and pre-filled messages</p>
-            </a>
-            <a href="/instagram" class="tool-card">
-                <h2 class="tool-name">instagram profile previwer</h2>
-                <p class="tool-description">take better branding decisions before updating your instagram profile</p>
-            </a>
-            <a href="/x" class="tool-card">
-                <h2 class="tool-name">x profile previwer</h2>
-                <p class="tool-description">take better branding decisions before updating your x profile</p>
-            </a>
-            <!-- Template for future tools -->
-            <!--
-            <a href="tool-url.html" class="tool-card">
-                <h2 class="tool-name">Tool Name</h2>
-                <p class="tool-description">Tool description goes here</p>
-            </a>
-            -->
+  <div class="profile-container">
+    <div class="banner-area" id="banner">
+      <input type="file" id="bannerInput" class="hidden" accept="image/*">
+    </div>
+    
+    <div class="profile-photo-container">
+      <div class="profile-photo" id="profilePhoto"></div>
+      <input type="file" id="photoInput" class="hidden" accept="image/*">
+    </div>
+    
+    <div class="profile-content">
+      <div class="name-area">
+        <span class="name" contenteditable="true">YOUR NAME</span>
+        <svg class="badge verified-badge" id="verifiedBadge" viewBox="0 0 24 24">
+          <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+        </svg>
+        <svg class="badge business-badge" id="businessBadge" viewBox="0 0 24 24">
+          <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+        </svg>
+        <div class="affiliate-container" id="affiliateContainer">
+          <svg class="verified-badge" viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: #1DA1F2;">
+            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+          </svg>
+          <div class="affiliate-badge" id="affiliateBadge">
+            <input type="file" id="affiliateInput" class="hidden" accept="image/*">
+          </div>
         </div>
+      </div>
+      
+      <div class="username" contenteditable="true">@username</div>
+      <div class="url" contenteditable="true">example.com/example</div>
+      
+      <div class="stats">
+        <div><span class="stat-number">20</span> Following</div>
+        <div><span class="stat-number">375.5K</span> Followers</div>
+      </div>
     </div>
+  </div>
 
-    <!-- Notice Banner -->
-    <div id="noticeBanner" class="notice-banner">
-        <div class="notice-content">
-            <div id="noticeText" class="notice-text">Loading...</div>
-            <button id="toggleLogs" class="toggle-logs">Show Logs</button>
-            <button id="closeNotice" class="notice-close">×</button>
-        </div>
-    </div>
+  <div class="toggle-container">
+    <label class="toggle-label">
+      <input type="checkbox" id="verifiedToggle">
+      Verified
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="businessToggle">
+      Business
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="affiliateToggle">
+      Affiliate
+    </label>
+  </div>
+  
+  <div class="toolbox" id="toolbox">Click to edit</div>
 
-    <!-- Logs Panel -->
-    <div id="logsPanel" class="logs-panel">
-        <div id="logsContainer"></div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="broadcast.js"></script>
-    <script>
-        // Initialize the notice system when the page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize broadcast system
-            if (typeof Broadcast !== 'undefined') {
-                Broadcast.init();
-            }
-
-            // Close notice button
-            document.getElementById('closeNotice').addEventListener('click', function() {
-                document.getElementById('noticeBanner').classList.remove('active');
-            });
-
-            // Toggle logs panel
-            document.getElementById('toggleLogs').addEventListener('click', function() {
-                const logsPanel = document.getElementById('logsPanel');
-                const isActive = logsPanel.classList.contains('active');
-                
-                logsPanel.classList.toggle('active');
-                this.textContent = isActive ? 'Show Logs' : 'Hide Logs';
-            });
-        });
-    </script>
+  <script>
+    // File upload handling
+    function handleFileSelect(event, element, isProfilePhoto = false) {
+      const file = event.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          if (isProfilePhoto) {
+            element.style.backgroundImage = 'url(' + e.target.result + ')';
+            element.style.backgroundSize = 'cover';
+            element.style.backgroundPosition = 'center';
+          } else {
+            element.style.backgroundImage = 'url(' + e.target.result + ')';
+            element.style.backgroundSize = 'cover';
+            element.style.backgroundPosition = 'center';
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    
+    // Add event listeners for file uploads
+    document.getElementById('banner').addEventListener('click', () => {
+      document.getElementById('bannerInput').click();
+    });
+    
+    document.getElementById('profilePhoto').addEventListener('click', () => {
+      document.getElementById('photoInput').click();
+    });
+    
+    document.getElementById('affiliateBadge').addEventListener('click', () => {
+      document.getElementById('affiliateInput').click();
+    });
+    
+    document.getElementById('bannerInput').addEventListener('change', function() {
+      handleFileSelect(this, document.getElementById('banner'));
+    });
+    
+    document.getElementById('photoInput').addEventListener('change', function() {
+      handleFileSelect(this, document.getElementById('profilePhoto'), true);
+    });
+    
+    document.getElementById('affiliateInput').addEventListener('change', function() {
+      handleFileSelect(this, document.getElementById('affiliateBadge'));
+    });
+    
+    // Badge toggle functionality
+    document.getElementById('verifiedToggle').addEventListener('change', function() {
+      document.getElementById('verifiedBadge').style.display = this.checked ? 'inline-block' : 'none';
+      document.getElementById('profilePhoto').classList.remove('business-photo'); // Reset border radius
+      
+      // Hide other badges if needed
+      if (this.checked) {
+        document.getElementById('businessToggle').checked = false;
+        document.getElementById('businessBadge').style.display = 'none';
+        document.getElementById('affiliateToggle').checked = false;
+        document.getElementById('affiliateContainer').style.display = 'none';
+      }
+    });
+    
+    document.getElementById('businessToggle').addEventListener('change', function() {
+      document.getElementById('businessBadge').style.display = this.checked ? 'inline-block' : 'none';
+      
+      // Apply border radius of 12px for business profile
+      if (this.checked) {
+        document.getElementById('profilePhoto').classList.add('business-photo');
+      } else {
+        document.getElementById('profilePhoto').classList.remove('business-photo');
+      }
+      
+      // Hide other badges if needed
+      if (this.checked) {
+        document.getElementById('verifiedToggle').checked = false;
+        document.getElementById('verifiedBadge').style.display = 'none';
+        document.getElementById('affiliateToggle').checked = false;
+        document.getElementById('affiliateContainer').style.display = 'none';
+      }
+    });
+    
+    document.getElementById('affiliateToggle').addEventListener('change', function() {
+      document.getElementById('affiliateContainer').style.display = this.checked ? 'flex' : 'none';
+      document.getElementById('profilePhoto').classList.remove('business-photo'); // Reset border radius
+      
+      // Hide other badges if needed
+      if (this.checked) {
+        document.getElementById('verifiedToggle').checked = false;
+        document.getElementById('verifiedBadge').style.display = 'none';
+        document.getElementById('businessToggle').checked = false;
+        document.getElementById('businessBadge').style.display = 'none';
+      }
+    });
+    
+    // Floating toolbox functionality
+    const toolbox = document.getElementById('toolbox');
+    const editableElements = document.querySelectorAll('[contenteditable="true"]');
+    
+    // For editable text content
+    editableElements.forEach(element => {
+      element.addEventListener('mousemove', function(e) {
+        toolbox.style.display = 'block';
+        toolbox.style.left = e.pageX + 10 + 'px';
+        toolbox.style.top = e.pageY + 10 + 'px';
+        toolbox.textContent = 'Click to edit';
+      });
+      
+      element.addEventListener('mouseleave', function() {
+        toolbox.style.display = 'none';
+      });
+    });
+    
+    // For banner
+    document.getElementById('banner').addEventListener('mousemove', function(e) {
+      toolbox.style.display = 'block';
+      toolbox.style.left = e.pageX + 10 + 'px';
+      toolbox.style.top = e.pageY + 10 + 'px';
+      toolbox.textContent = 'Click to edit banner';
+    });
+    
+    document.getElementById('banner').addEventListener('mouseleave', function() {
+      toolbox.style.display = 'none';
+    });
+    
+    // For profile photo
+    document.getElementById('profilePhoto').addEventListener('mousemove', function(e) {
+      toolbox.style.display = 'block';
+      toolbox.style.left = e.pageX + 10 + 'px';
+      toolbox.style.top = e.pageY + 10 + 'px';
+      toolbox.textContent = 'Click to edit photo';
+    });
+    
+    document.getElementById('profilePhoto').addEventListener('mouseleave', function() {
+      toolbox.style.display = 'none';
+    });
+    
+    // For affiliate badge
+    document.getElementById('affiliateBadge').addEventListener('mousemove', function(e) {
+      toolbox.style.display = 'block';
+      toolbox.style.left = e.pageX + 10 + 'px';
+      toolbox.style.top = e.pageY + 10 + 'px';
+      toolbox.textContent = 'Click to edit logo';
+    });
+    
+    document.getElementById('affiliateBadge').addEventListener('mouseleave', function() {
+      toolbox.style.display = 'none';
+    });
+    
+    // Initialize badges to be hidden
+    document.getElementById('verifiedBadge').style.display = 'none';
+    document.getElementById('businessBadge').style.display = 'none';
+    document.getElementById('affiliateContainer').style.display = 'none';
+  </script>
 </body>
 </html>
