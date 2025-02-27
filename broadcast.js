@@ -30,12 +30,6 @@ const Broadcast = (function() {
     const notices = [
 
         {
-            id: 6, 
-            message: "Advanced website previewer is now live!", 
-            importance: "update", 
-            timestamp: "2025-02-27T01:59:12.815Z"
-        },
-        {
             id: 5, 
             message: "Huge update for X profile, business & affiliate badges added", 
             importance: "update", 
