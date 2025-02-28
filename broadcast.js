@@ -80,8 +80,42 @@ const Broadcast = (function() {
         // Initialize log display
         updateLogsUI();
         
+        // Set up close button handler
+        setupCloseButton();
+        
         // Log initialization complete
         addLogEntry("Broadcast system ready");
+    }
+
+    /**
+     * Set up the close button for notice banner
+     */
+    function setupCloseButton() {
+        const closeBtn = document.getElementById('closeNotice');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                hideNotice();
+                addLogEntry("Notice manually closed by user");
+            });
+        } else {
+            console.error("Close button element not found");
+        }
+    }
+
+    /**
+     * Hide the current notice
+     */
+    function hideNotice() {
+        const banner = document.getElementById('noticeBanner');
+        if (banner) {
+            banner.classList.remove('active');
+        }
+        
+        // Clear any existing timer
+        if (store.noticeTimer) {
+            clearTimeout(store.noticeTimer);
+            store.noticeTimer = null;
+        }
     }
 
     /**
@@ -214,6 +248,7 @@ const Broadcast = (function() {
     return {
         init,
         displayNotice,
+        hideNotice,
         addLogEntry,
         getAllNotices
     };
