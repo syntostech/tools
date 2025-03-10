@@ -28,7 +28,12 @@ const Broadcast = (function() {
      *   - timestamp: When the notice was created (ISO format date string)
      */
     const notices = [
-
+        {
+            id: 6, 
+            message: "Verify a domain SSL status, without getting cached.", 
+            importance: "update", 
+            timestamp: "2025-03-10T02:42:00Z"
+        },
         {
             id: 5, 
             message: "Huge update for X profile, business & affiliate badges added", 
