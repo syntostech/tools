@@ -30,8 +30,8 @@ const Broadcast = (function() {
     const notices = [
         {
             id: 6, 
-            message: "Verify a domain SSL status, without getting cached.", 
-            importance: "update", 
+            message: "Verify a domain SSL status, without getting cached. (REMOVED)", 
+            importance: "warning", 
             timestamp: "2025-03-10T02:42:00Z"
         },
         {
